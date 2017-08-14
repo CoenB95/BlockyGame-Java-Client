@@ -2,13 +2,13 @@ import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Point3D;
-import javafx.scene.*;
+import javafx.scene.Group;
+import javafx.scene.PerspectiveCamera;
+import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -27,7 +27,8 @@ public class Main extends Application {
 	public void start(Stage primaryStage) throws Exception {
 
 		Rectangle rect0 = new Rectangle(500, 500);
-		rect0.setFill(new Color(1.0, 0.0, 0.0, 0.3));
+		rect0.fillProperty().bind(Bindings.when(rect0.hoverProperty()).then(Color.RED)
+				.otherwise(new Color(1.0, 0.0, 0.0, 0.3)));
 
 		Rectangle rect1 = new Rectangle(500, 500);
 		rect1.getTransforms().add(new Rotate(-90, 500, 0, 0, new Point3D(0, 1, 0)));
