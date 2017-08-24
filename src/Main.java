@@ -4,14 +4,14 @@ import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Point3D;
-import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
+import javafx.scene.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Box;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
@@ -26,26 +26,50 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-		Rectangle rect0 = new Rectangle(500, 500);
-		rect0.fillProperty().bind(Bindings.when(rect0.hoverProperty()).then(Color.RED)
-				.otherwise(new Color(1.0, 0.0, 0.0, 0.3)));
+//		Rectangle rect0 = new Rectangle(500, 500);
+//		rect0.fillProperty().bind(Bindings.when(rect0.hoverProperty()).then(Color.RED)
+//				.otherwise(new Color(1.0, 0.0, 0.0, 0.3)));
+//
+//		Rectangle rect1 = new Rectangle(500, 500);
+//		rect1.getTransforms().add(new Rotate(-90, 500, 0, 0, new Point3D(0, 1, 0)));
+//		rect1.setFill(Color.GREEN);
+//
+//		Rectangle rect2 = new Rectangle(500, 500);
+//		rect2.setFill(Color.BLUE);
+//		rect2.getTransforms().add(new Rotate(90, new Point3D(0, 1, 0)));
+//
+//		Rectangle rect3 = new Rectangle(500, 500);
+//		rect3.setFill(Color.ORANGE);
+//		rect3.getTransforms().add(new Rotate(180, 250, 0, -250, new Point3D(0, 1, 0)));
 
-		Rectangle rect1 = new Rectangle(500, 500);
-		rect1.getTransforms().add(new Rotate(-90, 500, 0, 0, new Point3D(0, 1, 0)));
-		rect1.setFill(Color.GREEN);
+		Box rect0 = new Box(500, 500, 500);
+		rect0.setMaterial(new PhongMaterial(Color.RED));
+		rect0.setTranslateY(500);
+		rect0.setTranslateZ(-500);
 
-		Rectangle rect2 = new Rectangle(500, 500);
-		rect2.setFill(Color.BLUE);
-		rect2.getTransforms().add(new Rotate(90, new Point3D(0, 1, 0)));
+		Box rect1 = new Box(500, 500, 500);
+		rect1.setMaterial(new PhongMaterial(Color.GREEN));
+		//rect1.setTranslateX(500);
 
-		Rectangle rect3 = new Rectangle(500, 500);
-		rect3.setFill(Color.ORANGE);
-		rect3.getTransforms().add(new Rotate(180, 250, 0, -250, new Point3D(0, 1, 0)));
+		Box rect2 = new Box(500, 500, 500);
+		rect2.setMaterial(new PhongMaterial(Color.BLUE));
+		rect2.setTranslateY(-500);
+
+		Box rect3 = new Box(500, 500, 500);
+		rect3.setMaterial(new PhongMaterial(Color.CYAN));
+		rect3.setTranslateY(-1000);
+
+		PointLight pointLight = new PointLight(Color.WHITE);
+		Sphere lightSphere = new Sphere(10);
+		lightSphere.setMaterial(new PhongMaterial(Color.ORANGE));
+		Group light = new Group(lightSphere, pointLight);
+		light.setTranslateZ(-500);
+		light.setTranslateY(-1750);
 
 		Group cube = new Group(rect3, rect1, rect2, rect0);
-		cube.setTranslateX(-250);
-		cube.setTranslateY(-500);
-		cube.setTranslateZ(250);
+		//cube.setTranslateX(-250);
+		cube.setTranslateY(-750);
+		//cube.setTranslateZ(250);
 
 		Circle circle = new Circle(0, 0, 500, Color.WHITE);
 		circle.getTransforms().add(new Rotate(90, new Point3D(1, 0, 0)));
@@ -62,7 +86,7 @@ public class Main extends Application {
 		camera.setNearClip(500);
 		camera.setFarClip(8000);
 
-		Group group = new Group(imageView, circle, cube);
+		Group group = new Group(imageView, circle, cube, light);
 
 		Rotate yRotation = new Rotate(0,  0, 0, 0, new Point3D(0, 1, 0));
 		Rotate xRotation = new Rotate(0,  0, 0, 0, new Point3D(1, 0, 0));
