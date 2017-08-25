@@ -21,26 +21,10 @@ import javafx.util.Duration;
  * @author Coen Boelhouwers
  * @version 1.0
  */
-public class Main extends Application {
+public class BoxMain extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-
-//		Rectangle rect0 = new Rectangle(500, 500);
-//		rect0.fillProperty().bind(Bindings.when(rect0.hoverProperty()).then(Color.RED)
-//				.otherwise(new Color(1.0, 0.0, 0.0, 0.3)));
-//
-//		Rectangle rect1 = new Rectangle(500, 500);
-//		rect1.getTransforms().add(new Rotate(-90, 500, 0, 0, new Point3D(0, 1, 0)));
-//		rect1.setFill(Color.GREEN);
-//
-//		Rectangle rect2 = new Rectangle(500, 500);
-//		rect2.setFill(Color.BLUE);
-//		rect2.getTransforms().add(new Rotate(90, new Point3D(0, 1, 0)));
-//
-//		Rectangle rect3 = new Rectangle(500, 500);
-//		rect3.setFill(Color.ORANGE);
-//		rect3.getTransforms().add(new Rotate(180, 250, 0, -250, new Point3D(0, 1, 0)));
 
 		Box rect0 = new Box(500, 500, 500);
 		rect0.setMaterial(new PhongMaterial(Color.RED));
@@ -64,7 +48,7 @@ public class Main extends Application {
 		lightSphere.setMaterial(new PhongMaterial(Color.ORANGE));
 		Group light = new Group(lightSphere, pointLight);
 		light.setTranslateZ(-500);
-		light.setTranslateY(-1750);
+		light.setTranslateY(-750);
 
 		Group cube = new Group(rect3, rect1, rect2, rect0);
 		//cube.setTranslateX(-250);
@@ -84,9 +68,11 @@ public class Main extends Application {
 
 		PerspectiveCamera camera = new PerspectiveCamera(true);
 		camera.setNearClip(500);
-		camera.setFarClip(8000);
+		camera.setFarClip(12000);
 
-		Group group = new Group(imageView, circle, cube, light);
+		Group group = new Group(imageView, circle, cube,
+				light
+		);
 
 		Rotate yRotation = new Rotate(0,  0, 0, 0, new Point3D(0, 1, 0));
 		Rotate xRotation = new Rotate(0,  0, 0, 0, new Point3D(1, 0, 0));
@@ -110,10 +96,10 @@ public class Main extends Application {
 		Timeline timeline2 = new Timeline(
 				new KeyFrame(Duration.ZERO,
 						new KeyValue(xRotation.angleProperty(), -10),
-						new KeyValue(distance.zProperty(), -2000)),
+						new KeyValue(distance.zProperty(), -1000)),
 				new KeyFrame(Duration.seconds(5),
 						new KeyValue(xRotation.angleProperty(), -40, Interpolator.EASE_BOTH),
-						new KeyValue(distance.zProperty(), -5000, Interpolator.EASE_BOTH))
+						new KeyValue(distance.zProperty(), -10000, Interpolator.EASE_BOTH))
 		);
 		timeline2.setAutoReverse(true);
 		timeline2.setCycleCount(Animation.INDEFINITE);
