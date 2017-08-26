@@ -62,10 +62,15 @@ public class Block extends MeshView {
 				4,8, 7,7, 5,9
 		};
 
+		int faceSmoothingGroups[] = {
+				0, 0, 0, 0, 0, 0, 0, 0
+		};
+
 		TriangleMesh mesh = new TriangleMesh();
 		mesh.getPoints().setAll(points);
 		mesh.getTexCoords().setAll(texCoords);
 		mesh.getFaces().setAll(faces);
+		mesh.getFaceSmoothingGroups().setAll(faceSmoothingGroups);
 		return mesh;
 	}
 }

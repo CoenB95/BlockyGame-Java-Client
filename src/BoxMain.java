@@ -33,7 +33,7 @@ public class BoxMain extends Application {
 		//rect0.setTranslateZ(-500);
 
 		Box rect1 = new Box(500, 500, 500);
-		rect1.setMaterial(new PhongMaterial(Color.GREEN));
+		rect1.setMaterial(new PhongMaterial(Color.WHITE, new Image("/cube.png"), null, null, null));
 		//rect1.setTranslateX(500);
 
 		Box rect2 = new Box(500, 500, 500);
