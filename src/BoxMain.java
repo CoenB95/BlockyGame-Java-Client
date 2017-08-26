@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -26,10 +27,10 @@ public class BoxMain extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-		Box rect0 = new Box(500, 500, 500);
-		rect0.setMaterial(new PhongMaterial(Color.RED));
+		Block rect0 = new Block(500, 500, 500);
+		rect0.setMaterial(new PhongMaterial(Color.WHITE, new Image("/cube.png"), null, null, null));
 		rect0.setTranslateY(500);
-		rect0.setTranslateZ(-500);
+		//rect0.setTranslateZ(-500);
 
 		Box rect1 = new Box(500, 500, 500);
 		rect1.setMaterial(new PhongMaterial(Color.GREEN));
@@ -70,8 +71,8 @@ public class BoxMain extends Application {
 		camera.setNearClip(500);
 		camera.setFarClip(12000);
 
-		Group group = new Group(imageView, circle, cube,
-				light
+		Group group = new Group(imageView, circle, cube
+				//, light
 		);
 
 		Rotate yRotation = new Rotate(0,  0, 0, 0, new Point3D(0, 1, 0));
