@@ -2,7 +2,6 @@ import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point3D;
@@ -17,8 +16,6 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -56,20 +53,19 @@ public class BoxMain extends Application {
 		camera.setNearClip(500);
 		camera.setFarClip(12000);
 
-		Group group = new Group(
-				imageView,
-				circle
-		);
+		Group group = new Group();
+
+		int size = 16;
+		int blockSize = 400;
 
 		CompletableFuture.runAsync(() -> {
-			Image img = new Image("/cube.png", false);
-			int size = 16;
-			int blockSize = 400;
+			Image img = new Image("/cube.png", 320, 320, true, false, false);//"/cube.png", false);
 			for (int x = -size / 2; x < size / 2; x++) {
 				for (int y = -size / 2; y < size / 2; y++) {
 					RectBlock block = new RectBlock(blockSize, blockSize, blockSize, img);
-					if (Math.random() > 0.8) {
-						block.setRaised();
+					//if (Math.random() > 0.8) {
+					if (Math.random() > 0.8 || x == 0 && y == 0) {
+						block.setRaised(x == 0 && y == 0 ? 2 : 1);
 					}
 					//Shape3D block = new Block(blockSize, blockSize, blockSize,"/cube.png");
 					//Shape3D block = new Box(blockSize, blockSize, blockSize);
@@ -91,7 +87,7 @@ public class BoxMain extends Application {
 		Rotate xRotation = new Rotate(0,  0, 0, 0, new Point3D(1, 0, 0));
 		Translate distance = new Translate(0, 0, -350);
 		camera.getTransforms().addAll(
-				new Translate(0, -150, 0),//pivot
+				new Translate(0, blockSize * -1.5, 0),//pivot
 				yRotation,
 				xRotation,
 				distance);

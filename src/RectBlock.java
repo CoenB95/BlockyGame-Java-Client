@@ -31,10 +31,10 @@ public class RectBlock extends Group {
 		getChildren().add(createSide(Side.TOP));
 	}
 
-	public void setRaised() {
+	public void setRaised(int levels) {
 		getChildren().addAll(createSide(Side.FRONT), createSide(Side.BACK),
 				createSide(Side.LEFT), createSide(Side.RIGHT));
-		setTranslateY(-height);
+		setTranslateY(-height * levels);
 	}
 
 	private ImageView createSide(Side side) {
