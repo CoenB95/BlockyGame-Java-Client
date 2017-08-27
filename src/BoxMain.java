@@ -3,6 +3,8 @@ import javafx.application.Application;
 import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.image.Image;
@@ -24,6 +26,8 @@ import java.util.concurrent.CompletableFuture;
  * @version 1.0
  */
 public class BoxMain extends Application {
+
+	public static DoubleProperty cameraAngle = new SimpleDoubleProperty();
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -55,8 +59,6 @@ public class BoxMain extends Application {
 		Group group = new Group(
 				imageView,
 				circle
-				//, light
-				, new AmbientLight()
 		);
 
 		CompletableFuture.runAsync(() -> {
@@ -115,6 +117,8 @@ public class BoxMain extends Application {
 		timeline2.setAutoReverse(true);
 		timeline2.setCycleCount(Animation.INDEFINITE);
 		timeline2.playFromStart();
+
+		cameraAngle.bind(yRotation.angleProperty());
 
 		System.out.println(Platform.isSupported(ConditionalFeature.SCENE3D));
 
