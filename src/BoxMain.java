@@ -9,14 +9,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Sphere;
+import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Coen Boelhouwers
@@ -26,23 +27,8 @@ public class BoxMain extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-
-		Block rect0 = new Block(500, 500, 500);
-		rect0.setMaterial(new PhongMaterial(Color.WHITE, new Image("/cube.png"), null, null, null));
-		rect0.setTranslateY(500);
-		//rect0.setTranslateZ(-500);
-
-		Box rect1 = new Box(500, 500, 500);
-		rect1.setMaterial(new PhongMaterial(Color.WHITE, new Image("/cube.png"), null, null, null));
-		//rect1.setTranslateX(500);
-
-		Box rect2 = new Box(500, 500, 500);
-		rect2.setMaterial(new PhongMaterial(Color.BLUE));
-		rect2.setTranslateY(-500);
-
-		Box rect3 = new Box(500, 500, 500);
-		rect3.setMaterial(new PhongMaterial(Color.CYAN));
-		rect3.setTranslateY(-1000);
+		Block rect0 = new Block(500, 500, 500, "/cube.png");
+		rect0.setTranslateY(-250);
 
 		PointLight pointLight = new PointLight(Color.WHITE);
 		Sphere lightSphere = new Sphere(10);
@@ -50,11 +36,6 @@ public class BoxMain extends Application {
 		Group light = new Group(lightSphere, pointLight);
 		light.setTranslateZ(-500);
 		light.setTranslateY(-750);
-
-		Group cube = new Group(rect3, rect1, rect2, rect0);
-		//cube.setTranslateX(-250);
-		cube.setTranslateY(-750);
-		//cube.setTranslateZ(250);
 
 		Circle circle = new Circle(0, 0, 500, Color.WHITE);
 		circle.getTransforms().add(new Rotate(90, new Point3D(1, 0, 0)));
@@ -71,15 +52,38 @@ public class BoxMain extends Application {
 		camera.setNearClip(500);
 		camera.setFarClip(12000);
 
-		Group group = new Group(imageView, circle, cube
+		Group group = new Group(
+				imageView,
+				circle
 				//, light
+				, new AmbientLight()
 		);
+
+		CompletableFuture.runAsync(() -> {
+			int size = 32;
+			int blockSize = 100;
+			for (int x = -size / 2; x < size / 2; x++) {
+				for (int y = -size / 2; y < size / 2; y++) {
+					//Shape3D block = new Block(blockSize, blockSize, blockSize,"/cube.png");
+					Shape3D block = new Box(blockSize, blockSize, blockSize);
+					block.setMaterial(new PhongMaterial(Color.GREEN));
+					block.setTranslateX(x * blockSize);
+					block.setTranslateZ(y * blockSize);
+					Platform.runLater(() -> group.getChildren().add(block));
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 
 		Rotate yRotation = new Rotate(0,  0, 0, 0, new Point3D(0, 1, 0));
 		Rotate xRotation = new Rotate(0,  0, 0, 0, new Point3D(1, 0, 0));
 		Translate distance = new Translate(0, 0, -350);
 		camera.getTransforms().addAll(
-				new Translate(0, -250, 0),//pivot
+				new Translate(0, -150, 0),//pivot
 				yRotation,
 				xRotation,
 				distance);
@@ -100,7 +104,7 @@ public class BoxMain extends Application {
 						new KeyValue(distance.zProperty(), -1000)),
 				new KeyFrame(Duration.seconds(5),
 						new KeyValue(xRotation.angleProperty(), -40, Interpolator.EASE_BOTH),
-						new KeyValue(distance.zProperty(), -10000, Interpolator.EASE_BOTH))
+						new KeyValue(distance.zProperty(), -5000, Interpolator.EASE_BOTH))
 		);
 		timeline2.setAutoReverse(true);
 		timeline2.setCycleCount(Animation.INDEFINITE);
