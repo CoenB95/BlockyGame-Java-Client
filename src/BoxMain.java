@@ -61,11 +61,14 @@ public class BoxMain extends Application {
 
 		CompletableFuture.runAsync(() -> {
 			Image img = new Image("/cube.png", false);
-			int size = 32;
-			int blockSize = 100;
+			int size = 16;
+			int blockSize = 400;
 			for (int x = -size / 2; x < size / 2; x++) {
 				for (int y = -size / 2; y < size / 2; y++) {
-					Node block = new RectBlock(blockSize, blockSize, blockSize, img);
+					RectBlock block = new RectBlock(blockSize, blockSize, blockSize, img);
+					if (Math.random() > 0.8) {
+						block.setRaised();
+					}
 					//Shape3D block = new Block(blockSize, blockSize, blockSize,"/cube.png");
 					//Shape3D block = new Box(blockSize, blockSize, blockSize);
 					//block.setMaterial(new PhongMaterial(Color.WHITE, new Image("/cube.png"), null,

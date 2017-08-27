@@ -9,6 +9,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
 /**
@@ -17,17 +18,58 @@ import javafx.scene.transform.Translate;
  */
 public class RectBlock extends Group {
 
-	public RectBlock(double w, double h, double d, Image image) {
-		ImageView top = new ImageView(image);
-		top.setFitWidth(w);
-		top.setFitHeight(h);
-		top.setViewport(new Rectangle2D(image.getWidth() * 0.25, image.getHeight() * 0,
-				image.getWidth() * 0.25, image.getHeight() * 0.25));
-		top.getTransforms().addAll(
-				new Translate(-w/2, -h, d/2),
-				new Rotate(-90, new Point3D(1, 0, 0))
+	private Image image;
+	private double width;
+	private double height;
+	private double depth;
 
-		);
-		getChildren().add(top);
+	public RectBlock(double w, double h, double d, Image image) {
+		this.image = image;
+		this.width = w;
+		this.height = h;
+		this.depth = d;
+		getChildren().add(createSide(Side.TOP));
+	}
+
+	public void setRaised() {
+		getChildren().addAll(createSide(Side.FRONT), createSide(Side.BACK));
+		setTranslateY(-height);
+	}
+
+	private ImageView createSide(Side side) {
+		switch (side) {
+			case TOP:
+				return createSide(0.25, 0,
+						new Translate(-width/2, -height/2, depth/2),
+						new Rotate(-90, new Point3D(1, 0, 0)));
+			case FRONT:
+				return createSide(0.25, 0.25,
+						new Translate(-width/2, -height/2, -depth/2));
+			case BACK:
+				return createSide(0.75, 0.25,
+						new Rotate(-180, new Point3D(1, 0, 0)),
+						new Translate(-width/2, -height/2, -depth/2));
+		}
+		return null;
+	}
+
+	private ImageView createSide(double percentX, double percentY, Transform... transforms) {
+		ImageView side = new ImageView(image);
+		side.setFitWidth(width);
+		side.setFitHeight(height);
+		side.setViewport(new Rectangle2D(image.getWidth() * percentX, image.getHeight() * percentY,
+				image.getWidth() * 0.25, image.getHeight() * 0.25));
+		side.getTransforms().addAll(transforms);
+		return side;
+
+	}
+
+	private enum Side {
+		LEFT,
+		FRONT,
+		RIGHT,
+		BACK,
+		TOP,
+		BOTTOM
 	}
 }
