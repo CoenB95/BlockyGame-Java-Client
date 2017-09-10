@@ -49,22 +49,25 @@ public class Terrain extends MeshView {
 		this.blockData = map;
 		TriangleMesh mesh = new TriangleMesh();
 		setMesh(mesh);
-		setMaterial(new PhongMaterial(Color.WHITE, new Image("/cube.png"), null, null, null));
+		setMaterial(new PhongMaterial(Color.WHITE, new Image("/cube.png", 100, 100, true, false), null, null, null));
 		CompletableFuture.runAsync(() -> build(mesh));
 	}
 
 	private void build(TriangleMesh mesh) {
 		mesh.getTexCoords().setAll(TEX_COORDS);
 		float minX = -(blockWidth * dataWidth / 2);
+		float minY = blockWidth / 2;
 		float minZ = -(blockDepth * dataDepth / 2);
 
 		//To remember, depth INCREASES when further away, and decreases when coming nearer.
 		System.out.println("Creating points [" + (dataWidth + 1) * (dataDepth + 1) + "]");
-		for (int z = 0; z <= dataDepth; z++) {
-			for (int x = 0; x <= dataWidth; x++) {
-				mesh.getPoints().addAll(
-						minX + x * blockWidth, 0, -(minZ + z * blockDepth)
-				);
+		for (int y = 0; y <= 2; y++) {
+			for (int z = 0; z <= dataDepth; z++) {
+				for (int x = 0; x <= dataWidth; x++) {
+					mesh.getPoints().addAll(
+							minX + x * blockWidth, minY + -(y * blockWidth), -(minZ + z * blockDepth)
+					);
+				}
 			}
 		}
 
@@ -82,10 +85,12 @@ public class Terrain extends MeshView {
 				} else {
 					// ltb = left, top, back (x=0, y=0, z=0)
 					// rbf = right, bottom, front (x=1, y=1, z=1)
-					int ltb = blockZ * dataWidth + blockX + blockZ;
-					int rtb = blockZ * dataWidth + blockX + blockZ + 1;
-					int ltf = (blockZ + 1) * dataWidth + blockX + (blockZ + 1);
-					int rtf = (blockZ + 1) * dataWidth + blockX + (blockZ + 1) + 1;
+					int ltb = (dataWidth + 1) * (dataDepth + 1) + (blockZ * dataWidth + blockX + blockZ);
+					int rtb = (dataWidth + 1) * (dataDepth + 1) + (blockZ * dataWidth + blockX + blockZ + 1);
+					int ltf = (dataWidth + 1) * (dataDepth + 1) + ((blockZ + 1) * dataWidth + blockX + blockZ + 1);
+					int rtf = (dataWidth + 1) * (dataDepth + 1) + ((blockZ + 1) * dataWidth + blockX + blockZ + 2);
+					int lbb = (blockZ * dataWidth + blockX + blockZ);
+					int lbf = ((blockZ + 1) * dataWidth + blockX + blockZ + 1);
 
 					if (blockState == 1) {
 						System.out.println("  Plane (dataNr=" + (blockZ * dataWidth + blockX) +
@@ -95,6 +100,11 @@ public class Terrain extends MeshView {
 								rtb, 11, ltb, 10, ltf, 0,
 								rtb, 11, ltf, 0, rtf, 1
 						);
+						mesh.getFaces().addAll(
+								ltf, 0, ltb, 4, lbb, 5,
+								ltf, 0, lbb, 5, lbf, 3
+						);
+						mesh.getFaceSmoothingGroups().addAll(0, 0, 0, 0);
 					} else {
 						System.out.println("  Unknown, make gap");
 					}
