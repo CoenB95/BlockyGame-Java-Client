@@ -58,30 +58,7 @@ public class BoxMain extends Application {
 		int size = 16;
 		int blockSize = 400;
 
-		CompletableFuture.runAsync(() -> {
-			Image img = new Image("/cube.png", 320, 320, true, false, false);//"/cube.png", false);
-			for (int x = -size / 2; x < size / 2; x++) {
-				for (int y = -size / 2; y < size / 2; y++) {
-					RectBlock block = new RectBlock(blockSize, blockSize, blockSize, img);
-					//if (Math.random() > 0.8) {
-					if (Math.random() > 0.8 || x == 0 && y == 0) {
-						block.setRaised(x == 0 && y == 0 ? 2 : 1);
-					}
-					//Shape3D block = new Block(blockSize, blockSize, blockSize,"/cube.png");
-					//Shape3D block = new Box(blockSize, blockSize, blockSize);
-					//block.setMaterial(new PhongMaterial(Color.WHITE, new Image("/cube.png"), null,
-					//		null, null));
-					block.setTranslateX(x * blockSize);
-					block.setTranslateZ(y * blockSize);
-					Platform.runLater(() -> group.getChildren().add(block));
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		});
+		generateBlocks(group, size, blockSize);
 
 		Rotate yRotation = new Rotate(0,  0, 0, 0, new Point3D(0, 1, 0));
 		Rotate xRotation = new Rotate(0,  0, 0, 0, new Point3D(1, 0, 0));
@@ -124,5 +101,32 @@ public class BoxMain extends Application {
 
 		primaryStage.setScene(scene);
 		primaryStage.show();
+	}
+
+	private void generateBlocks(Group group, int size, int blockSize) {
+		CompletableFuture.runAsync(() -> {
+			Image img = new Image("/cube.png", 320, 320, true, false, false);//"/cube.png", false);
+			for (int x = -size / 2; x < size / 2; x++) {
+				for (int y = -size / 2; y < size / 2; y++) {
+					RectBlock block = new RectBlock(blockSize, blockSize, blockSize, img);
+					//if (Math.random() > 0.8) {
+					if (Math.random() > 0.8 || x == 0 && y == 0) {
+						block.setRaised(x == 0 && y == 0 ? 2 : 1);
+					}
+					//Shape3D block = new Block(blockSize, blockSize, blockSize,"/cube.png");
+					//Shape3D block = new Box(blockSize, blockSize, blockSize);
+					//block.setMaterial(new PhongMaterial(Color.WHITE, new Image("/cube.png"), null,
+					//		null, null));
+					block.setTranslateX(x * blockSize);
+					block.setTranslateZ(y * blockSize);
+					Platform.runLater(() -> group.getChildren().add(block));
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 }
