@@ -1,3 +1,6 @@
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 
@@ -40,9 +43,12 @@ public class Terrain extends MeshView {
 	private Terrain(float blockWidth, float blockDepth, int dataWidth, int dataDepth, List<Integer> map) {
 		this.dataWidth = dataWidth;
 		this.dataDepth = dataDepth;
+		this.blockWidth = blockWidth;
+		this.blockDepth = blockDepth;
 		this.blockData = map;
 		TriangleMesh mesh = new TriangleMesh();
 		setMesh(mesh);
+		setMaterial(new PhongMaterial(Color.WHITE, new Image("/cube.png"), null, null, null));
 		CompletableFuture.runAsync(() -> build(mesh));
 	}
 
@@ -51,11 +57,12 @@ public class Terrain extends MeshView {
 		float minX = -(blockWidth * dataWidth / 2);
 		float minZ = -(blockDepth * dataDepth / 2);
 
+		//To remember, depth INCREASES when further away, and decreases when coming nearer.
 		System.out.println("Creating points [" + (dataWidth + 1) * (dataDepth + 1) + "]");
 		for (int z = 0; z <= dataDepth; z++) {
 			for (int x = 0; x <= dataWidth; x++) {
 				mesh.getPoints().addAll(
-						minX + x * blockWidth, 0, minZ + z * blockDepth
+						minX + x * blockWidth, 0, -(minZ + z * blockDepth)
 				);
 			}
 		}
@@ -69,18 +76,27 @@ public class Terrain extends MeshView {
 					e.printStackTrace();
 				}
 				int blockState = blockData.get(blockZ * dataWidth + blockX);
-				if (blockState == 1) {
-					System.out.println("  Plane");
-					int tl = blockZ * dataWidth + blockX + blockZ;
-					int tr = blockZ * dataWidth + blockX + blockZ + 1;
-					int bl = (blockZ + 1) * dataWidth + blockX + (blockZ + 1);
-					int br = (blockZ + 1) * dataWidth + blockX + (blockZ + 1) + 1;
-					mesh.getFaces().addAll(
-							tr, tl, bl,
-							tr, bl, br
-					);
-				} else {
+				if (blockState == 0) {
 					System.out.println("  Gap");
+				} else {
+					// ltb = left, top, back (x=0, y=0, z=0)
+					// rbf = right, bottom, front (x=1, y=1, z=1)
+					int ltb = blockZ * dataWidth + blockX + blockZ;
+					int rtb = blockZ * dataWidth + blockX + blockZ + 1;
+					int ltf = (blockZ + 1) * dataWidth + blockX + (blockZ + 1);
+					int rtf = (blockZ + 1) * dataWidth + blockX + (blockZ + 1) + 1;
+
+					if (blockState == 1) {
+						System.out.println("  Plane (dataNr=" + (blockZ * dataWidth + blockX) +
+								", pointNrLtb=" + (blockZ * dataWidth + blockX + blockZ));
+
+						mesh.getFaces().addAll(
+								rtb, 11, ltb, 10, ltf, 0,
+								rtb, 11, ltf, 0, rtf, 1
+						);
+					} else {
+						System.out.println("  Unknown, make gap");
+					}
 				}
 			}
 		}
@@ -89,8 +105,7 @@ public class Terrain extends MeshView {
 
 	public static Terrain generateRandom(float blockWidth, float blockDepth) {
 		Terrain terrain = new Terrain(blockWidth, blockDepth, 3, 3,
-				Arrays.asList(1,0,0,0,1,0,0,0,1)
-				//Arrays.asList(2,1,1,1,2,1,1,1,2)
+				Arrays.asList(1,1,1,1,1,1,1,1,1)
 		);
 		return terrain;
 	}

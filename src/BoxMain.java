@@ -58,7 +58,11 @@ public class BoxMain extends Application {
 		int size = 16;
 		int blockSize = 400;
 
-		generateBlocks(group, size, blockSize);
+		//generateBlocks(group, size, blockSize);
+		Terrain terrain = Terrain.generateRandom(blockSize, blockSize);
+		group.getChildren().add(terrain);
+		group.getChildren().add(new Box(50, 50, 50));
+		group.getChildren().add(new Block(100, 100, 100, Color.BLUE));
 
 		Rotate yRotation = new Rotate(0,  0, 0, 0, new Point3D(0, 1, 0));
 		Rotate xRotation = new Rotate(0,  0, 0, 0, new Point3D(1, 0, 0));
