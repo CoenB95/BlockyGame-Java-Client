@@ -16,6 +16,8 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -56,12 +58,19 @@ public class BoxMain extends Application {
 		Group group = new Group();
 
 		int size = 16;
-		int blockSize = 400;
+		int blockSize = 200;
 
 		//generateBlocks(group, size, blockSize);
-		Terrain terrain = Terrain.generateRandom(blockSize, blockSize, 16, 16);
+		Terrain terrain2 = Terrain.generateRandom(blockSize, blockSize, 16, 16);
+		List<Integer> blockData = new ArrayList<>(terrain2.getBlockData());
+		for (int i = 0; i < blockData.size(); i++)
+			blockData.set(i, blockData.get(i) == 0 ? 1 : 0);
+		Terrain terrain = new Terrain(blockSize, blockSize, 16, 16, blockData);
+		//Terrain.generateFull(blockSize, blockSize, 16, 16);
+		terrain.setTranslateY(blockSize);
+
 		group.getChildren().add(terrain);
-		group.getChildren().add(new Box(50, 50, 50));
+		group.getChildren().add(terrain2);
 		group.getChildren().add(new Block(100, 100, 100, Color.BLUE));
 
 		Rotate yRotation = new Rotate(0,  0, 0, 0, new Point3D(0, 1, 0));
