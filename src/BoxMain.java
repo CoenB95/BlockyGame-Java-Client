@@ -59,7 +59,7 @@ public class BoxMain extends Application {
 		int blockSize = 400;
 
 		//generateBlocks(group, size, blockSize);
-		Terrain terrain = Terrain.generateRandom(blockSize, blockSize);
+		Terrain terrain = Terrain.generateRandom(blockSize, blockSize, 16, 16);
 		group.getChildren().add(terrain);
 		group.getChildren().add(new Box(50, 50, 50));
 		group.getChildren().add(new Block(100, 100, 100, Color.BLUE));

@@ -4,6 +4,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -71,7 +72,7 @@ public class Terrain extends MeshView {
 		for (int blockZ = 0; blockZ < dataDepth; blockZ++) {
 			for (int blockX = 0; blockX < dataWidth; blockX++) {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -103,10 +104,11 @@ public class Terrain extends MeshView {
 		System.out.println("Done creating faces");
 	}
 
-	public static Terrain generateRandom(float blockWidth, float blockDepth) {
-		Terrain terrain = new Terrain(blockWidth, blockDepth, 3, 3,
-				Arrays.asList(1,1,1,1,1,1,1,1,1)
-		);
+	public static Terrain generateRandom(float blockWidth, float blockDepth, int gridWidth, int gridDepth) {
+		List<Integer> blockData = new ArrayList<>(gridWidth * gridDepth);
+		for (int i = 0; i < gridWidth * gridDepth; i++)
+			blockData.add((int) Math.round(Math.random()));
+		Terrain terrain = new Terrain(blockWidth, blockDepth, gridWidth, gridDepth, blockData);
 		return terrain;
 	}
 }
