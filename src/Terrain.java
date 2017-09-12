@@ -188,7 +188,7 @@ public class Terrain extends MeshView {
 	public static Terrain generateRandom(float blockSize, int gridWidth, int gridDepth, int gridHeight) {
 		List<Integer> blockData = new ArrayList<>(gridWidth * gridDepth);
 		for (int i = 0; i < gridWidth * gridDepth * gridHeight; i++)
-			blockData.add((int) Math.round(Math.random()));
+			blockData.add(i < gridWidth * gridDepth ? 1 : (int) Math.round(Math.random()));
 		return new Terrain(blockSize, blockSize, blockSize, gridWidth, gridDepth, gridHeight, blockData);
 	}
 
