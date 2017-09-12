@@ -82,12 +82,12 @@ public class Terrain extends MeshView {
 			for (int blockY = 0; blockY < dataHeight; blockY++) {
 				for (int blockZ = 0; blockZ < dataDepth; blockZ++) {
 					for (int blockX = 0; blockX < dataWidth; blockX++) {
-//						try {
-//							Thread.sleep(10);
-//						} catch (InterruptedException e) {
-//							e.printStackTrace();
-//						}
-						int blockId = blockZ * dataWidth + blockX;
+						try {
+							Thread.sleep(50);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						int blockId = blockY * dataWidth * dataDepth + blockZ * dataWidth + blockX;
 						int blockState = blockData.get(blockId);
 						if (blockState == 0) {
 							System.out.println("  Gap");
@@ -161,17 +161,10 @@ public class Terrain extends MeshView {
 
 	public static Terrain generateRandom(float blockSize, int gridWidth, int gridDepth, int gridHeight) {
 		List<Integer> blockData = new ArrayList<>(gridWidth * gridDepth);
-		for (int i = 0; i < gridWidth * gridDepth; i++)
+		for (int i = 0; i < gridWidth * gridDepth * gridHeight; i++)
 			blockData.add((int) Math.round(Math.random()));
 		return new Terrain(blockSize, blockSize, blockSize, gridWidth, gridDepth, gridHeight, blockData);
 	}
-
-//	public static Terrain generateFull(float blockWidth, float blockDepth, int gridWidth, int gridDepth) {
-//		List<Integer> blockData = new ArrayList<>(gridWidth * gridDepth);
-//		for (int i = 0; i < gridWidth * gridDepth; i++)
-//			blockData.add(1);
-//		return new Terrain(blockWidth, blockDepth, gridWidth, gridDepth, blockData);
-//	}
 
 	public List<Integer> getBlockData() {
 		return blockData;
