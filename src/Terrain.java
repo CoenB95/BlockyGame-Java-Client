@@ -98,11 +98,17 @@ public class Terrain extends MeshView {
 									rtb, 11, ltb, 10, ltf, 0,
 									rtb, 11, ltf, 0, rtf, 1
 							);
-							mesh.getFaces().addAll(
-									ltf, 0, ltb, 4, lbb, 5,
-									ltf, 0, lbb, 5, lbf, 3
-							);
-							mesh.getFaceSmoothingGroups().addAll(0, 0, 0, 0);
+							mesh.getFaceSmoothingGroups().addAll(0, 0);
+							int leftBlockIndex = blockZ * dataWidth + blockX - 1;
+							if (leftBlockIndex < 0 || blockData.get(leftBlockIndex) == 1) {
+								System.out.println("    Left side skipped!");
+							} else {
+								mesh.getFaces().addAll(
+										ltf, 0, ltb, 4, lbb, 5,
+										ltf, 0, lbb, 5, lbf, 3
+								);
+								mesh.getFaceSmoothingGroups().addAll(0, 0);
+							}
 						} else {
 							System.out.println("  Unknown, make gap");
 						}

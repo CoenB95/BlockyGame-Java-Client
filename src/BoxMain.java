@@ -109,7 +109,7 @@ public class BoxMain extends Application {
 		System.out.println(Platform.isSupported(ConditionalFeature.SCENE3D));
 
 		Scene scene = new Scene(group, 600, 400, true, SceneAntialiasing.BALANCED);
-		scene.setFill(Color.BLACK);
+		scene.setFill(Color.DARKSLATEBLUE);
 		scene.setCamera(camera);
 
 		primaryStage.setScene(scene);
