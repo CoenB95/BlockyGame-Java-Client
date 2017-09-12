@@ -54,7 +54,7 @@ public class BoxMain extends Application {
 
 		PerspectiveCamera camera = new PerspectiveCamera(true);
 		camera.setNearClip(500);
-		camera.setFarClip(12000);
+		camera.setFarClip(5000);
 
 		Group group = new Group();
 
@@ -62,23 +62,9 @@ public class BoxMain extends Application {
 		int blockSize = 200;
 
 		//generateBlocks(group, size, blockSize);
-		Terrain terrain2 = Terrain.generateRandom(blockSize, blockSize, size, size);
-		List<Integer> blockData = new ArrayList<>();
-		for (int i = 0; i < terrain2.getBlockData().size(); i++)
-			blockData.add(terrain2.getBlockData().get(i) == 0 ? 1 : 0);
-		Terrain terrain = new Terrain(blockSize, blockSize, size, size, blockData);
-		//Terrain.generateFull(blockSize, blockSize, 16, 16);
-		terrain.setTranslateY(blockSize);
+		Terrain terrain = Terrain.generateRandom(blockSize, size, size, 2);
 
 		group.getChildren().add(terrain);
-		new Thread(() -> {
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			Platform.runLater(() -> group.getChildren().add(terrain2));
-		}).start();
 		group.getChildren().add(new Block(100, 100, 100, Color.BLUE));
 
 		group.setOnMouseMoved(event -> {
