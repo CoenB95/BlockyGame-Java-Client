@@ -1,13 +1,14 @@
+import data.FaceUtils;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+
+import static data.FaceUtils.*;
 
 /**
  * @author Coen Boelhouwers
@@ -16,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class Terrain extends MeshView {
 
 	private List<Integer> blockData;
+	private FaceUtils faceMap;
 	private float blockWidth;
 	private float blockDepth;
 	private int dataWidth;
@@ -46,6 +48,7 @@ public class Terrain extends MeshView {
 		this.dataDepth = dataDepth;
 		this.blockWidth = blockWidth;
 		this.blockDepth = blockDepth;
+		this.faceMap = new FaceUtils();//FXCollections.observableList(new ArrayList<>());
 		setMaterial(new PhongMaterial(Color.WHITE, new Image("/cube.png", 100, 100, true, false), null, null, null));
 		setBlockData(map);
 	}
@@ -73,11 +76,12 @@ public class Terrain extends MeshView {
 			for (int blockZ = 0; blockZ < dataDepth; blockZ++) {
 				for (int blockX = 0; blockX < dataWidth; blockX++) {
 					try {
-						Thread.sleep(100);
+						Thread.sleep(10);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					int blockState = blockData.get(blockZ * dataWidth + blockX);
+					int blockId = blockZ * dataWidth + blockX;
+					int blockState = blockData.get(blockId);
 					if (blockState == 0) {
 						System.out.println("  Gap");
 					} else {
@@ -99,6 +103,7 @@ public class Terrain extends MeshView {
 									rtb, 11, ltf, 0, rtf, 1
 							);
 							mesh.getFaceSmoothingGroups().addAll(0, 0);
+							faceMap.addFace(blockId, Side.TOP);
 							int leftBlockIndex = blockZ * dataWidth + blockX - 1;
 							if (leftBlockIndex < 0 || blockData.get(leftBlockIndex) == 1) {
 								System.out.println("    Left side skipped!");
@@ -108,6 +113,7 @@ public class Terrain extends MeshView {
 										ltf, 0, lbb, 5, lbf, 3
 								);
 								mesh.getFaceSmoothingGroups().addAll(0, 0);
+								faceMap.addFace(blockId, Side.LEFT);
 							}
 						} else {
 							System.out.println("  Unknown, make gap");
@@ -119,6 +125,30 @@ public class Terrain extends MeshView {
 			e.printStackTrace();
 		}
 		System.out.println("Done creating faces");
+	}
+
+	public int findBlockByFace(int face) {
+		return faceMap.getBlockByFace((int) Math.floor(face / 2));
+	}
+
+	private int lastMarked = -1;
+
+	public void markBlock(int blockId) {
+		if (lastMarked >= 0) {
+			FaceUtils.adjustFace(((TriangleMesh) getMesh()).getFaces(), faceMap.getFace(lastMarked, Side.TOP),
+					11, 10, 0,
+					11, 0, 11);
+			FaceUtils.adjustFace(((TriangleMesh) getMesh()).getFaces(), faceMap.getFace(lastMarked, Side.LEFT),
+					0, 4,5,
+					0, 5,3);
+		}
+		FaceUtils.adjustFace(((TriangleMesh) getMesh()).getFaces(), faceMap.getFace(blockId, Side.TOP),
+				6, 1, 2,
+				6, 2, 7);
+		FaceUtils.adjustFace(((TriangleMesh) getMesh()).getFaces(), faceMap.getFace(blockId, Side.LEFT),
+				6, 1, 2,
+				6, 2, 7);
+		lastMarked = blockId;
 	}
 
 	public static Terrain generateRandom(float blockWidth, float blockDepth, int gridWidth, int gridDepth) {

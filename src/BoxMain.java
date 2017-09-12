@@ -8,6 +8,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.PickResult;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
@@ -61,17 +62,32 @@ public class BoxMain extends Application {
 		int blockSize = 200;
 
 		//generateBlocks(group, size, blockSize);
-		Terrain terrain2 = Terrain.generateRandom(blockSize, blockSize, 16, 16);
-		List<Integer> blockData = new ArrayList<>(terrain2.getBlockData());
-		for (int i = 0; i < blockData.size(); i++)
-			blockData.set(i, blockData.get(i) == 0 ? 1 : 0);
-		Terrain terrain = new Terrain(blockSize, blockSize, 16, 16, blockData);
+		Terrain terrain2 = Terrain.generateRandom(blockSize, blockSize, size, size);
+		List<Integer> blockData = new ArrayList<>();
+		for (int i = 0; i < terrain2.getBlockData().size(); i++)
+			blockData.add(terrain2.getBlockData().get(i) == 0 ? 1 : 0);
+		Terrain terrain = new Terrain(blockSize, blockSize, size, size, blockData);
 		//Terrain.generateFull(blockSize, blockSize, 16, 16);
 		terrain.setTranslateY(blockSize);
 
 		group.getChildren().add(terrain);
-		group.getChildren().add(terrain2);
+		new Thread(() -> {
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			Platform.runLater(() -> group.getChildren().add(terrain2));
+		}).start();
 		group.getChildren().add(new Block(100, 100, 100, Color.BLUE));
+
+		group.setOnMouseMoved(event -> {
+			PickResult pickResult = event.getPickResult();
+			if (!(pickResult.getIntersectedNode() instanceof Terrain))
+				return;
+			int blockNr = ((Terrain) pickResult.getIntersectedNode()).findBlockByFace(pickResult.getIntersectedFace());
+			((Terrain) pickResult.getIntersectedNode()).markBlock(blockNr);
+		});
 
 		Rotate yRotation = new Rotate(0,  0, 0, 0, new Point3D(0, 1, 0));
 		Rotate xRotation = new Rotate(0,  0, 0, 0, new Point3D(1, 0, 0));
