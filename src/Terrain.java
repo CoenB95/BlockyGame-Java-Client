@@ -102,19 +102,20 @@ public class Terrain extends MeshView {
 							int lbf = blockY * blocksPerLevel + ((blockZ + 1) * dataWidth + blockX + blockZ + 1);
 
 							if (blockState == 1) {
-								System.out.println("  Plane (dataNr=" + (blockZ * dataWidth + blockX) +
-										", pointNrLtb=" + (blockZ * dataWidth + blockX + blockZ));
-
-								mesh.getFaces().addAll(
-										rtb, 11, ltb, 10, ltf, 0,
-										rtb, 11, ltf, 0, rtf, 1
-								);
-								mesh.getFaceSmoothingGroups().addAll(0, 0);
-								faceMap.addFace(blockId, Side.TOP);
-								int leftBlockIndex = blockZ * dataWidth + blockX - 1;
-								if (leftBlockIndex < 0 || blockData.get(leftBlockIndex) == 1) {
-									System.out.println("    Left side skipped!");
-								} else {
+								int topBlockIndex = (blockY + 1) * dataWidth * dataDepth + blockZ * dataWidth + blockX;
+								if (topBlockIndex >= 0 && (topBlockIndex >= blockData.size() ||
+										blockData.get(topBlockIndex) == 0)) {
+									mesh.getFaces().addAll(
+											rtb, 11, ltb, 10, ltf, 0,
+											rtb, 11, ltf, 0, rtf, 1
+									);
+									mesh.getFaceSmoothingGroups().addAll(0, 0);
+									faceMap.addFace(blockId, Side.TOP);
+								}
+								int leftBlockIndex = blockX == 0 ? -1 :
+										blockY * dataWidth * dataDepth + blockZ * dataWidth + blockX - 1;
+								if (leftBlockIndex >= 0 && leftBlockIndex < blockData.size() &&
+										blockData.get(leftBlockIndex) == 0) {
 									mesh.getFaces().addAll(
 											ltf, 0, ltb, 4, lbb, 5,
 											ltf, 0, lbb, 5, lbf, 3
