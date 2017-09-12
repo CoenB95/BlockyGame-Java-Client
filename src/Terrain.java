@@ -171,7 +171,7 @@ public class Terrain extends MeshView {
 		if (lastMarked >= 0) {
 			FaceUtils.adjustFace(((TriangleMesh) getMesh()).getFaces(), faceMap.getFace(lastMarked, Side.TOP),
 					11, 10, 0,
-					11, 0, 11);
+					11, 0, 1);
 			FaceUtils.adjustFace(((TriangleMesh) getMesh()).getFaces(), faceMap.getFace(lastMarked, Side.LEFT),
 					0, 4,5,
 					0, 5,3);
