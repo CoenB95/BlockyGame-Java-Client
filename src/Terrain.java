@@ -78,7 +78,8 @@ public class Terrain extends MeshView {
 			}
 
 			System.out.println("Creating faces...");
-			int blocksPerLevel = (dataWidth + 1) * (dataDepth + 1);
+			int pointsPerLevel = (dataWidth + 1) * (dataDepth + 1);
+			int pointsWidth = (dataWidth + 1);
 			for (int blockY = 0; blockY < dataHeight; blockY++) {
 				for (int blockZ = 0; blockZ < dataDepth; blockZ++) {
 					for (int blockX = 0; blockX < dataWidth; blockX++) {
@@ -94,12 +95,14 @@ public class Terrain extends MeshView {
 						} else {
 							// ltb = left, top, back (x=0, y=0, z=0)
 							// rbf = right, bottom, front (x=1, y=1, z=1)
-							int ltb = (blockY + 1) * blocksPerLevel +(blockZ * dataWidth + blockX + blockZ);
-							int rtb = (blockY + 1) * blocksPerLevel + (blockZ * dataWidth + blockX + blockZ + 1);
-							int ltf = (blockY + 1) * blocksPerLevel + ((blockZ + 1) * dataWidth + blockX + blockZ + 1);
-							int rtf = (blockY + 1) * blocksPerLevel + ((blockZ + 1) * dataWidth + blockX + blockZ + 2);
-							int lbb = blockY * blocksPerLevel + (blockZ * dataWidth + blockX + blockZ);
-							int lbf = blockY * blocksPerLevel + ((blockZ + 1) * dataWidth + blockX + blockZ + 1);
+							int ltb = (blockY + 1) * pointsPerLevel + blockZ * pointsWidth + blockX;
+							int rtb = (blockY + 1) * pointsPerLevel + blockZ * pointsWidth + blockX + 1;
+							int ltf = (blockY + 1) * pointsPerLevel + (blockZ + 1) * pointsWidth + blockX;
+							int rtf = (blockY + 1) * pointsPerLevel + (blockZ + 1) * pointsWidth + blockX + 1;
+							int lbb = blockY * pointsPerLevel + blockZ * pointsWidth + blockX;
+							int lbf = blockY * pointsPerLevel + (blockZ + 1) * pointsWidth + blockX;
+							int rbb = blockY * pointsPerLevel + blockZ * pointsWidth + blockX + 1;
+							int rbf = blockY * pointsPerLevel + (blockZ + 1) * pointsWidth + blockX + 1;
 
 							if (blockState == 1) {
 								int topBlockIndex = (blockY + 1) * dataWidth * dataDepth + blockZ * dataWidth + blockX;
@@ -122,6 +125,28 @@ public class Terrain extends MeshView {
 									);
 									mesh.getFaceSmoothingGroups().addAll(0, 0);
 									faceMap.addFace(blockId, Side.LEFT);
+								}
+								int frontBlockIndex = blockZ == dataDepth - 1 ? -1 :
+										blockY * dataWidth * dataDepth + (blockZ + 1) * dataWidth + blockX;
+								if (frontBlockIndex >= 0 && frontBlockIndex < blockData.size() &&
+										blockData.get(frontBlockIndex) == 0) {
+									mesh.getFaces().addAll(
+											rtf, 1, ltf, 0, lbf, 3,
+											rtf, 1, lbf, 3, rbf, 2
+									);
+									mesh.getFaceSmoothingGroups().addAll(0, 0);
+									faceMap.addFace(blockId, Side.FRONT);
+								}
+								int rightBlockIndex = blockX == dataWidth - 1 ? -1 :
+										blockY * dataWidth * dataDepth + blockZ * dataWidth + blockX + 1;
+								if (rightBlockIndex >= 0 && rightBlockIndex < blockData.size() &&
+										blockData.get(rightBlockIndex) == 0) {
+									mesh.getFaces().addAll(
+											rtb, 6, rtf, 1, rbf, 2,
+											rtb, 6, rbf, 2, rbb, 7
+									);
+									mesh.getFaceSmoothingGroups().addAll(0, 0);
+									faceMap.addFace(blockId, Side.RIGHT);
 								}
 							} else {
 								System.out.println("  Unknown, make gap");

@@ -54,7 +54,7 @@ public class BoxMain extends Application {
 
 		PerspectiveCamera camera = new PerspectiveCamera(true);
 		camera.setNearClip(500);
-		camera.setFarClip(5000);
+		camera.setFarClip(9000);
 
 		Group group = new Group();
 
