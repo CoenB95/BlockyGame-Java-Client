@@ -84,14 +84,14 @@ public class Terrain extends MeshView {
 				for (int blockZ = 0; blockZ < dataDepth; blockZ++) {
 					for (int blockX = 0; blockX < dataWidth; blockX++) {
 						try {
-							Thread.sleep(50);
+							Thread.sleep(20);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
 						int blockId = blockY * dataWidth * dataDepth + blockZ * dataWidth + blockX;
 						int blockState = blockData.get(blockId);
 						if (blockState == 0) {
-							System.out.println("  Gap");
+							//System.out.println("  Gap");
 						} else {
 							// ltb = left, top, back (x=0, y=0, z=0)
 							// rbf = right, bottom, front (x=1, y=1, z=1)
@@ -159,6 +159,13 @@ public class Terrain extends MeshView {
 			e.printStackTrace();
 		}
 		System.out.println("Done creating faces");
+		setMesh(null);
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		setMesh(mesh);
 	}
 
 	public int findBlockByFace(int face) {
@@ -199,7 +206,7 @@ public class Terrain extends MeshView {
 	public void setBlockData(List<Integer> blockData) {
 		this.blockData = blockData;
 		TriangleMesh mesh = new TriangleMesh();
-		setMesh(mesh);
+		//setMesh(mesh);
 		CompletableFuture.runAsync(() -> build(mesh));
 	}
 }

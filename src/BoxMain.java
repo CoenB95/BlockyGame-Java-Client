@@ -62,9 +62,17 @@ public class BoxMain extends Application {
 		int blockSize = 200;
 
 		//generateBlocks(group, size, blockSize);
-		Terrain terrain = Terrain.generateRandom(blockSize, size, size, 2);
+		for (int x = 0; x < 3; x++) {
+			for (int z = 0; z < 3; z++) {
+				Terrain terrain = Terrain.generateRandom(blockSize, size, size, 2);
+				terrain.setTranslateX(size * blockSize * x);
+				terrain.setTranslateZ(size * blockSize * z);
+				group.getChildren().add(terrain);
+			}
+		}
+		//Terrain terrain = Terrain.generateRandom(blockSize, size, size, 2);
 
-		group.getChildren().add(terrain);
+		//group.getChildren().add(terrain);
 		group.getChildren().add(new Block(100, 100, 100, Color.BLUE));
 
 		group.setOnMouseMoved(event -> {
@@ -79,7 +87,7 @@ public class BoxMain extends Application {
 		Rotate xRotation = new Rotate(0,  0, 0, 0, new Point3D(1, 0, 0));
 		Translate distance = new Translate(0, 0, -350);
 		camera.getTransforms().addAll(
-				new Translate(0, blockSize * -1.5, 0),//pivot
+				new Translate(blockSize * size, blockSize * -1.5, blockSize * size),//pivot
 				yRotation,
 				xRotation,
 				distance);
@@ -100,7 +108,7 @@ public class BoxMain extends Application {
 						new KeyValue(distance.zProperty(), -1000)),
 				new KeyFrame(Duration.seconds(5),
 						new KeyValue(xRotation.angleProperty(), -40, Interpolator.EASE_BOTH),
-						new KeyValue(distance.zProperty(), -5000, Interpolator.EASE_BOTH))
+						new KeyValue(distance.zProperty(), -10000, Interpolator.EASE_BOTH))
 		);
 		timeline2.setAutoReverse(true);
 		timeline2.setCycleCount(Animation.INDEFINITE);
