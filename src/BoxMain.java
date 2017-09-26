@@ -68,8 +68,8 @@ public class BoxMain extends Application {
 		camera.setNearClip(200);
 		camera.setFarClip(9000);
 
-		Rotate yRotation = new Rotate(0,  0, 0, 0, new Point3D(0, 1, 0));
-		Rotate xRotation = new Rotate(0,  0, 0, 0, new Point3D(1, 0, 0));
+		Rotate yRotation = new Rotate(0,  0, 0, -250, new Point3D(0, 1, 0));
+		Rotate xRotation = new Rotate(0,  0, 0, -250, new Point3D(1, 0, 0));
 
 		new AnimationTimer() {
 			@Override
