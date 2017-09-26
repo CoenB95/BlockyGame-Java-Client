@@ -122,8 +122,8 @@ public class BoxMain extends Application {
 
 		scene.setOnMouseMoved(event -> {
 			if (!ig && !escape) {
-				double newX = event.getScreenX() * 0.2;
-				double newY = event.getScreenY() * 0.2;
+				double newX = event.getScreenX() * 0.4;
+				double newY = event.getScreenY() * 0.4;
 				if (lastX < 0) {
 					lastX = newX;
 					lastY = newY;
@@ -158,7 +158,7 @@ public class BoxMain extends Application {
 
 		Translate distance = new Translate(0, 0, -350);
 		camera.getTransforms().addAll(
-				new Translate(blockSize * size, blockSize * -2, blockSize * size),//pivot
+				new Translate(blockSize * size, blockSize * -3, blockSize * size),//pivot
 				yRotation,
 				xRotation,
 				distance);
