@@ -83,11 +83,11 @@ public class Terrain extends MeshView {
 			for (int blockY = 0; blockY < dataHeight; blockY++) {
 				for (int blockZ = 0; blockZ < dataDepth; blockZ++) {
 					for (int blockX = 0; blockX < dataWidth; blockX++) {
-						try {
-							Thread.sleep(20);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
+//						try {
+//							Thread.sleep(20);
+//						} catch (InterruptedException e) {
+//							e.printStackTrace();
+//						}
 						int blockId = blockY * dataWidth * dataDepth + blockZ * dataWidth + blockX;
 						int blockState = blockData.get(blockId);
 						if (blockState == 0) {
@@ -160,11 +160,11 @@ public class Terrain extends MeshView {
 		}
 		System.out.println("Done creating faces");
 		setMesh(null);
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(100);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 		setMesh(mesh);
 	}
 

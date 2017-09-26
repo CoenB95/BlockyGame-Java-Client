@@ -8,6 +8,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.PickResult;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -17,6 +18,7 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -28,9 +30,19 @@ import java.util.concurrent.CompletableFuture;
 public class BoxMain extends Application {
 
 	public static DoubleProperty cameraAngle = new SimpleDoubleProperty();
+	private boolean ig;
+	private boolean re;
+	private double lastX = -1;
+	private double lastY = -1;
+	private boolean escape;
+
+	private boolean movingForward;
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
+	public void start(Stage primaryStage) {
+		Group group = new Group();
+		Scene scene = new Scene(group, 600, 400, true, SceneAntialiasing.BALANCED);
+
 		Block rect0 = new Block(500, 500, 500, "/cube.png");
 		rect0.setTranslateY(-250);
 
@@ -53,10 +65,21 @@ public class BoxMain extends Application {
 		imageView.setTranslateZ(-2000);
 
 		PerspectiveCamera camera = new PerspectiveCamera(true);
-		camera.setNearClip(500);
+		camera.setNearClip(200);
 		camera.setFarClip(9000);
 
-		Group group = new Group();
+		Rotate yRotation = new Rotate(0,  0, 0, 0, new Point3D(0, 1, 0));
+		Rotate xRotation = new Rotate(0,  0, 0, 0, new Point3D(1, 0, 0));
+
+		new AnimationTimer() {
+			@Override
+			public void handle(long now) {
+				if (movingForward) {
+					camera.setTranslateX(camera.getTranslateX() + Math.cos(Math.toRadians(yRotation.getAngle() - 90)) * 10);
+					camera.setTranslateZ(camera.getTranslateZ() - Math.sin(Math.toRadians(yRotation.getAngle() - 90)) * 10);
+				}
+			}
+		}.start();
 
 		int size = 16;
 		int blockSize = 200;
@@ -75,7 +98,56 @@ public class BoxMain extends Application {
 		//group.getChildren().add(terrain);
 		group.getChildren().add(new Block(100, 100, 100, Color.BLUE));
 
-		group.setOnMouseMoved(event -> {
+		try {
+			new Robot().mouseMove(800, 450);
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
+
+		scene.setOnKeyPressed(event -> {
+			if (event.getCode() == KeyCode.ESCAPE) {
+				escape = !escape;
+				if (!escape) re = true;
+				else System.out.println("escape");
+			} else if (event.getCode() == KeyCode.W) {
+				movingForward = true;
+			}
+		});
+
+		scene.setOnKeyReleased(event -> {
+			if (event.getCode() == KeyCode.W) {
+				movingForward = false;
+			}
+		});
+
+		scene.setOnMouseMoved(event -> {
+			if (!ig && !escape) {
+				double newX = event.getScreenX() * 0.2;
+				double newY = event.getScreenY() * 0.2;
+				if (lastX < 0) {
+					lastX = newX;
+					lastY = newY;
+				}
+				ig = true;
+				if (!re) {
+					yRotation.setAngle(yRotation.getAngle() + newX - lastX);
+					xRotation.setAngle(xRotation.getAngle() - (newY - lastY));
+					//lastX = newR;
+				}
+				try {
+
+					new Robot().mouseMove(800, 450);
+				} catch (AWTException e) {
+					e.printStackTrace();
+				}
+			} else if (ig) {
+				ig = false;
+				if (re) {
+
+					System.out.println("Reset (ignore " + (event.getScreenX() * 0.2 - lastX) + ")");
+					re = false;
+				}
+			}
 			PickResult pickResult = event.getPickResult();
 			if (!(pickResult.getIntersectedNode() instanceof Terrain))
 				return;
@@ -83,11 +155,10 @@ public class BoxMain extends Application {
 			((Terrain) pickResult.getIntersectedNode()).markBlock(blockNr);
 		});
 
-		Rotate yRotation = new Rotate(0,  0, 0, 0, new Point3D(0, 1, 0));
-		Rotate xRotation = new Rotate(0,  0, 0, 0, new Point3D(1, 0, 0));
+
 		Translate distance = new Translate(0, 0, -350);
 		camera.getTransforms().addAll(
-				new Translate(blockSize * size, blockSize * -1.5, blockSize * size),//pivot
+				new Translate(blockSize * size, blockSize * -2, blockSize * size),//pivot
 				yRotation,
 				xRotation,
 				distance);
@@ -100,7 +171,7 @@ public class BoxMain extends Application {
 		);
 		timeline.setDelay(Duration.seconds(2));
 		timeline.setCycleCount(Animation.INDEFINITE);
-		timeline.playFromStart();
+		//timeline.playFromStart();
 
 		Timeline timeline2 = new Timeline(
 				new KeyFrame(Duration.ZERO,
@@ -112,13 +183,13 @@ public class BoxMain extends Application {
 		);
 		timeline2.setAutoReverse(true);
 		timeline2.setCycleCount(Animation.INDEFINITE);
-		timeline2.playFromStart();
+		//timeline2.playFromStart();
 
 		cameraAngle.bind(yRotation.angleProperty());
 
 		System.out.println(Platform.isSupported(ConditionalFeature.SCENE3D));
 
-		Scene scene = new Scene(group, 600, 400, true, SceneAntialiasing.BALANCED);
+
 		scene.setFill(Color.DARKSLATEBLUE);
 		scene.setCamera(camera);
 
