@@ -15,6 +15,8 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Coen Boelhouwers
@@ -29,8 +31,9 @@ public class BoxMain extends Application {
 	private double lastY = -1;
 	private boolean escape;
 
-	int size = 16;
-	int blockSize = 200;
+	private int size = 16;
+	private int blockSize = 200;
+	private List<Terrain> chunks;
 
 	private boolean movingForward;
 
@@ -61,19 +64,28 @@ public class BoxMain extends Application {
 				if (movingForward) {
 					double newCX = camera.getTranslateX() + Math.cos(Math.toRadians(yRotation.getAngle() - 90)) * 20;
 					double newCZ = camera.getTranslateZ() - Math.sin(Math.toRadians(yRotation.getAngle() - 90)) * 20;
-					System.out.println("Chunk x=" + Math.round(newCX / size / blockSize) + ", y=" + Math.round(newCZ / size / blockSize));
-					camera.setTranslateX(newCX);
-					camera.setTranslateZ(newCZ);
+					int chunkX = (int) Math.round(newCX / size / blockSize);
+					int chunkZ = (int) Math.round(newCZ / size / blockSize);
+					int chunkIndex = chunkX * 3 + chunkZ;
+					double chunkBlockX = (newCX - chunkX * size * blockSize) / blockSize;
+					double chunkBlockZ = (newCZ - chunkZ * size * blockSize) / blockSize;
+					System.out.println("Chunk nr. " + chunkIndex + ", x=" + chunkBlockX + ", z=" + chunkBlockZ);
+					if (chunkX >= 0 && chunkX < 3)
+						camera.setTranslateX(newCX);
+					if (chunkZ >= 0 && chunkZ < 3)
+						camera.setTranslateZ(newCZ);
 				}
 			}
 		}.start();
 
+		chunks = new ArrayList<>();
 		for (int x = 0; x < 3; x++) {
 			for (int z = 0; z < 3; z++) {
 				Terrain terrain = Terrain.generateRandom(blockSize, size, size, 2);
 				terrain.setTranslateX(size * blockSize * x);
 				terrain.setTranslateZ(size * blockSize * z);
 				group.getChildren().add(terrain);
+				chunks.add(terrain);
 			}
 		}
 
