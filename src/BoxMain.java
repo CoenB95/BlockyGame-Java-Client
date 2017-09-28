@@ -68,21 +68,24 @@ public class BoxMain extends Application {
 		camera.setNearClip(200);
 		camera.setFarClip(9000);
 
-		Rotate yRotation = new Rotate(0,  0, 0, -250, new Point3D(0, 1, 0));
-		Rotate xRotation = new Rotate(0,  0, 0, -250, new Point3D(1, 0, 0));
+		int size = 16;
+		int blockSize = 200;
+
+		Rotate yRotation = new Rotate(0,  0, 0, 0, new Point3D(0, 1, 0));
+		Rotate xRotation = new Rotate(0,  0, 0, 0, new Point3D(1, 0, 0));
 
 		new AnimationTimer() {
 			@Override
 			public void handle(long now) {
 				if (movingForward) {
-					camera.setTranslateX(camera.getTranslateX() + Math.cos(Math.toRadians(yRotation.getAngle() - 90)) * 10);
-					camera.setTranslateZ(camera.getTranslateZ() - Math.sin(Math.toRadians(yRotation.getAngle() - 90)) * 10);
+					double newCX = camera.getTranslateX() + Math.cos(Math.toRadians(yRotation.getAngle() - 90)) * 20;
+					double newCZ = camera.getTranslateZ() - Math.sin(Math.toRadians(yRotation.getAngle() - 90)) * 20;
+					System.out.println("Chunk x=" + Math.round(newCX / size / blockSize) + ", y=" + Math.round(newCZ / size / blockSize));
+					camera.setTranslateX(newCX);
+					camera.setTranslateZ(newCZ);
 				}
 			}
 		}.start();
-
-		int size = 16;
-		int blockSize = 200;
 
 		//generateBlocks(group, size, blockSize);
 		for (int x = 0; x < 3; x++) {
@@ -162,8 +165,7 @@ public class BoxMain extends Application {
 		camera.getTransforms().addAll(
 				new Translate(blockSize * size, blockSize * -3, blockSize * size),//pivot
 				yRotation,
-				xRotation,
-				distance);
+				xRotation);
 
 		Timeline timeline = new Timeline(
 				new KeyFrame(Duration.ZERO,
