@@ -145,6 +145,8 @@ public class BoxMain extends Application {
 				if (re) {
 
 					System.out.println("Reset (ignore " + (event.getScreenX() * 0.2 - lastX) + ")");
+					lastX = event.getScreenX() * 0.4;
+					lastY = event.getScreenY() * 0.4;
 					re = false;
 				}
 			}
