@@ -1,3 +1,5 @@
+package mycraft;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.DoubleBinding;

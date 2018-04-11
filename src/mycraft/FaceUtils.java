@@ -1,4 +1,4 @@
-package data;
+package mycraft.data;
 
 import javafx.scene.shape.ObservableFaceArray;
 

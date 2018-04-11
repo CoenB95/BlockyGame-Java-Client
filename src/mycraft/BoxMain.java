@@ -1,18 +1,19 @@
+package mycraft;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point3D;
-import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
+import javafx.scene.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.PickResult;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
+import mycraft.movement.MouseCamera;
+import mycraft.movement.SimpleMouseCamera;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -25,15 +26,23 @@ import java.util.List;
 public class BoxMain extends Application {
 
 	public static DoubleProperty cameraAngle = new SimpleDoubleProperty();
-	private boolean ig;
-	private boolean re;
-	private double lastX = -1;
-	private double lastY = -1;
-	private boolean escape;
+	private MouseCamera mouseCamera;
+//	private boolean ig;
+//	private boolean re;
+//	private double lastX = -1;
+//	private double lastY = -1;
+//	private double sensitivityX = 0.2;
+//	private double sensitivityY = 0.2;
+	private boolean escape = true;
 
 	private int size = 16;
 	private int blockSize = 200;
 	private List<Terrain> chunks;
+//	private double curRotY = 0;
+//	private double curRotX = 0;
+//	RotateTransition yGlobalAnim;
+//	RotateTransition xGlobalAnim;
+//	mycraft.Rotate3DTransition ranim;
 
 	private boolean movingForward;
 
@@ -49,13 +58,25 @@ public class BoxMain extends Application {
 		camera.setNearClip(200);
 		camera.setFarClip(9000);
 		camera.getTransforms().addAll(
-				new Translate(0, blockSize * -3, 0),//pivot
-				yRotation,
-				xRotation);
+				new Translate(0, blockSize * -3, 0)//pivot
+//				yRotation,
+//				xRotation);
+		);
+
+//		yGlobalAnim = new RotateTransition(Duration.millis(400), camera);
+//		yGlobalAnim.setAxis(new Point3D(0, 1, 0));
+//		xGlobalAnim = new RotateTransition(Duration.millis(400), camera);
+//		xGlobalAnim.setAxis(new Point3D(1, 0, 0));
+//		ranim = new mycraft.Rotate3DTransition(Duration.millis(10), camera);
+//		ranim.setInterpolator(Interpolator.LINEAR);
+		mouseCamera = new SimpleMouseCamera(camera);
 
 		Scene scene = new Scene(group, 600, 400, true, SceneAntialiasing.BALANCED);
 		scene.setFill(Color.DARKBLUE);
 		scene.setCamera(camera);
+
+		LightBase light = new AmbientLight();
+		group.getChildren().add(light);
 
 		//Walking
 		new AnimationTimer() {
@@ -98,7 +119,7 @@ public class BoxMain extends Application {
 		scene.setOnKeyPressed(event -> {
 			if (event.getCode() == KeyCode.ESCAPE) {
 				escape = !escape;
-				if (!escape) re = true;
+				if (!escape) mouseCamera.resetDelta();
 				else System.out.println("escape");
 			} else if (event.getCode() == KeyCode.W) {
 				movingForward = true;
@@ -112,34 +133,70 @@ public class BoxMain extends Application {
 		});
 
 		scene.setOnMouseMoved(event -> {
-			if (!ig && !escape) {
-				double newX = event.getScreenX() * 0.4;
-				double newY = event.getScreenY() * 0.4;
-				if (lastX < 0) {
-					lastX = newX;
-					lastY = newY;
-				}
-				ig = true;
-				if (!re) {
-					yRotation.setAngle(yRotation.getAngle() + newX - lastX);
-					xRotation.setAngle(xRotation.getAngle() - (newY - lastY));
-				}
-				try {
+			if (escape)
+				return;
 
-					new Robot().mouseMove(800, 450);
-				} catch (AWTException e) {
-					e.printStackTrace();
-				}
-			} else if (ig) {
-				ig = false;
-				if (re) {
+			mouseCamera.applyMouseMoved(event);
+//			double newX = event.getScreenX() * sensitivityX;
+//			double newY = event.getScreenY() * sensitivityY;
+//			if (!escape && !ig) {
+//				if (lastX < 0) {
+//					lastX = newX;
+//					lastY = newY;
+//				}
+				//ig = true;
+//				if (!re) {
+//				yRotation.setAngle(yRotation.getAngle() + (newX - lastX));
+//				xRotation.setAngle(xRotation.getAngle() - (newY - lastY));
+//				}
 
-					System.out.println("Reset (ignore " + (event.getScreenX() * 0.2 - lastX) + ")");
-					lastX = event.getScreenX() * 0.4;
-					lastY = event.getScreenY() * 0.4;
-					re = false;
-				}
-			}
+//				double newRotY = curRotY - (newX - lastX);
+//				curRotY = newRotY;
+//				double newRotX = curRotX - (newY - lastY);
+//				curRotX = newRotX;
+				//RotateTransition yAnim = new RotateTransition(Duration.millis(400), camera);
+				//yAnim.setAxis(new Point3D(0, 1, 0));
+
+//				yGlobalAnim.setToAngle(newRotY);
+//				yGlobalAnim.playFromStart();
+//				xGlobalAnim.setToAngle(newRotX);
+//				xGlobalAnim.playFromStart();
+//				ranim.setToRotation(newRotX, newRotY, 0);
+//				ranim.playFromStart();
+
+//				Platform.runLater(() -> {
+//					try {
+//						ig = true;
+//						new Robot().mouseMove(800, 450);
+//						ig = false;
+//					} catch (AWTException e) {
+//						e.printStackTrace();
+//					}
+//				});
+//			} else {
+//				lastX = -1;
+//				lastY = -1;
+//			}
+//			lastX = newX;
+//			lastY = newY;
+
+//				Platform.runLater(() -> {
+//					try {
+//						new Robot().mouseMove(800, 450);
+//					} catch (AWTException e) {
+//						e.printStackTrace();
+//					}
+//				});
+//			} else if (ig) {
+//				ig = false;
+//				if (re) {
+//
+//					System.out.println("Reset (ignore " + (event.getScreenX() * 0.2 - lastX) + ")");
+//					lastX = event.getScreenX() * sensitivity;
+//					lastY = event.getScreenY() * sensitivity;
+//					re = false;
+//				}
+//			}
 			PickResult pickResult = event.getPickResult();
 			if (!(pickResult.getIntersectedNode() instanceof Terrain))
 				return;
@@ -150,4 +207,5 @@ public class BoxMain extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
+
 }
