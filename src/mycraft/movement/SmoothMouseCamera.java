@@ -1,27 +1,32 @@
 package mycraft.movement;
 
-import javafx.animation.Interpolator;
 import javafx.scene.Camera;
-import javafx.util.Duration;
-import mycraft.Rotate3DTransition;
 
-public class SmoothMouseCamera extends mycraft.movement.RobotMouseCamera {
+public class SmoothMouseCamera extends RobotMouseCamera {
 
-	private Rotate3DTransition ranim;
-	private double horizontalRotation;
-	private double verticalRotation;
+	private double currentHorizontalRotation;
+	private double currentVerticalRotation;
+	private double targetHorizontalRotation;
+	private double targetVerticalRotation;
 
 	public SmoothMouseCamera(Camera camera) {
 		super(camera);
-		ranim = new Rotate3DTransition(Duration.millis(10), camera);
-		ranim.setInterpolator(Interpolator.LINEAR);
 	}
 
 	@Override
-	public void updateCamera(double horizontalDelta, double verticalDelta) {
-		horizontalRotation += horizontalDelta;
-		verticalRotation += verticalDelta;
-		ranim.setToRotation(verticalRotation, horizontalRotation, 0);
-		ranim.playFromStart();
+	public void onUpdate(double elapsedSeconds) {
+		double snappyness = 0.95;
+		double newHorizontalRotation = snappyness * currentHorizontalRotation + (1.0 - snappyness) * targetHorizontalRotation;
+		double newVerticalRotation = snappyness * currentVerticalRotation + (1.0 - snappyness) * targetVerticalRotation;
+		horizontalTransform.setAngle(newHorizontalRotation);
+		verticalTransform.setAngle(newVerticalRotation);
+		currentHorizontalRotation = newHorizontalRotation;
+		currentVerticalRotation = newVerticalRotation;
+	}
+
+	@Override
+	public void updateCamera(double horizontalRotation, double verticalRotation) {
+		targetHorizontalRotation = horizontalRotation;
+		targetVerticalRotation = verticalRotation;
 	}
 }

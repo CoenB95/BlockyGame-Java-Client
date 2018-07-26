@@ -13,7 +13,7 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import mycraft.movement.MouseCamera;
-import mycraft.movement.SimpleMouseCamera;
+import mycraft.movement.SmoothMouseCamera;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ public class BoxMain extends Application {
 //		xGlobalAnim.setAxis(new Point3D(1, 0, 0));
 //		ranim = new mycraft.Rotate3DTransition(Duration.millis(10), camera);
 //		ranim.setInterpolator(Interpolator.LINEAR);
-		mouseCamera = new SimpleMouseCamera(camera);
+		mouseCamera = new SmoothMouseCamera(camera);
 
 		Scene scene = new Scene(group, 600, 400, true, SceneAntialiasing.BALANCED);
 		scene.setFill(Color.DARKBLUE);
@@ -82,6 +82,7 @@ public class BoxMain extends Application {
 		new AnimationTimer() {
 			@Override
 			public void handle(long now) {
+				mouseCamera.onUpdate(0.013);
 				if (movingForward) {
 					double newCX = camera.getTranslateX() + Math.cos(Math.toRadians(yRotation.getAngle() - 90)) * 20;
 					double newCZ = camera.getTranslateZ() - Math.sin(Math.toRadians(yRotation.getAngle() - 90)) * 20;
@@ -119,7 +120,7 @@ public class BoxMain extends Application {
 		scene.setOnKeyPressed(event -> {
 			if (event.getCode() == KeyCode.ESCAPE) {
 				escape = !escape;
-				if (!escape) mouseCamera.resetDelta();
+				if (!escape) mouseCamera.notifyFirstMovement();
 				else System.out.println("escape");
 			} else if (event.getCode() == KeyCode.W) {
 				movingForward = true;

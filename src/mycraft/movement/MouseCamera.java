@@ -4,7 +4,6 @@ import javafx.geometry.Point3D;
 import javafx.scene.Camera;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
 
 public abstract class MouseCamera {
 	public static final double DEFAULT_SENSITIVITY = 0.2;
@@ -17,7 +16,12 @@ public abstract class MouseCamera {
 	private double horizontalSensitivity = DEFAULT_SENSITIVITY;
 	private double verticalRotation;
 	private double verticalSensitivity = DEFAULT_SENSITIVITY;
-	private boolean reset = false;
+
+	/**
+	 * Notifies that the following mouse-movement is the first (after a break).
+	 * This means that it is likely that the delta is much larger and therefore should be ignored.
+	 */
+	private boolean firstMovement = false;
 
 	public MouseCamera(Camera camera) {
 		this.camera = camera;
@@ -27,26 +31,23 @@ public abstract class MouseCamera {
 	}
 
 	public void applyMouseMoved(MouseEvent event) {
-		if (reset) {
-			horizontalRotation = 0;
-			verticalRotation = 0;
+		if (!firstMovement) {
+			double horizontalDelta = (event.getScreenX() - 800) * horizontalSensitivity;
+			double verticalDelta = -(event.getScreenY() - 450) * verticalSensitivity;
+			horizontalRotation += horizontalDelta;
+			verticalRotation += verticalDelta;
 		}
 
-		double newHorizontalRotation = (event.getScreenY() * horizontalSensitivity);
-		double newVerticalRotation = (event.getScreenX() * verticalSensitivity);
-		double horizontalDelta = newHorizontalRotation - horizontalRotation;
-		double verticalDelta = newVerticalRotation - verticalRotation;
-		horizontalRotation = newHorizontalRotation;
-		verticalRotation = newVerticalRotation;
-
-		System.out.format("Apply delta hor=%+.1f, ver=%+.1f, reset=%b\n", reset ? 0 : horizontalDelta, reset ? 0 : verticalDelta, reset);
-		updateCamera(reset ? 0 : horizontalDelta, reset ? 0 : verticalDelta);
-		reset = false;
+		System.out.format("Apply delta hor=%+.1f, ver=%+.1f, firstMovement=%b\n", firstMovement ? 0 : horizontalRotation, firstMovement ? 0 : verticalRotation, firstMovement);
+		updateCamera(horizontalRotation, verticalRotation);
+		firstMovement = false;
 	}
 
-	public void resetDelta() {
-		reset = true;
+	public void notifyFirstMovement() {
+		firstMovement = true;
 	}
 
-	public abstract void updateCamera(double horizontalDelta, double verticalDelta);
+	public abstract void onUpdate(double elapsedSeconds);
+
+	public abstract void updateCamera(double horizontalRotation, double verticalRotation);
 }

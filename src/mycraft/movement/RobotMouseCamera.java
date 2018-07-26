@@ -16,14 +16,14 @@ public abstract class RobotMouseCamera extends MouseCamera {
 
 	@Override
 	public void applyMouseMoved(MouseEvent event) {
-		System.out.print("Event: " + event);
+		System.out.println("Event: " + event);
 		if (ignoreRobot) {
 			ignoreRobot = false;
 			System.out.println("Ignore robot's mouse movement");
 		} else {
 			System.out.println("Apply user's mouse movement");
 			super.applyMouseMoved(event);
-//			ignoreRobot = true;
+			ignoreRobot = true;
 			Platform.runLater(() -> {
 				try {
 //					ignoreRobot = true;
