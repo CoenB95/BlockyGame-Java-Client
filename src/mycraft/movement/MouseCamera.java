@@ -43,6 +43,10 @@ public abstract class MouseCamera {
 		firstMovement = false;
 	}
 
+	public double getHorizontalRotation() {
+		return horizontalRotation;
+	}
+
 	public void notifyFirstMovement() {
 		firstMovement = true;
 	}
