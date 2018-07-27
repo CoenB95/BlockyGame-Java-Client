@@ -10,6 +10,7 @@ import javafx.scene.transform.Translate;
 import mycraft.gameobject.GameObject;
 import mycraft.movement.SimpleTranslateBehavior;
 import mycraft.movement.SmoothRotateBehavior;
+import mycraft.movement.SmoothTranslateBehavior;
 
 import java.awt.*;
 
@@ -32,8 +33,8 @@ public class Camera extends GameObject {
 
 	public Camera(Scene scene) {
 		this(scene, DEFAULT_SENSITIVITY);
-		addComponent(new SmoothRotateBehavior(0.95));
-		addComponent(new SimpleTranslateBehavior());
+		addComponent(new SmoothRotateBehavior(0.8));
+		addComponent(new SmoothTranslateBehavior(0.8));
 	}
 
 	public Camera(Scene scene, double sensitivity) {
