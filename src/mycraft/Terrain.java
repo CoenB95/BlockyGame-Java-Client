@@ -1,4 +1,6 @@
-import data.FaceUtils;
+package mycraft;
+
+import mycraft.data.FaceUtils;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -8,7 +10,7 @@ import javafx.scene.shape.TriangleMesh;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-import static data.FaceUtils.*;
+import static mycraft.data.FaceUtils.*;
 
 /**
  * @author Coen Boelhouwers

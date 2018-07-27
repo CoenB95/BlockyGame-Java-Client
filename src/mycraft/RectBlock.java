@@ -1,15 +1,11 @@
+package mycraft;
+
 import javafx.geometry.Point3D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Material;
-import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.MeshView;
-import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
 /**
