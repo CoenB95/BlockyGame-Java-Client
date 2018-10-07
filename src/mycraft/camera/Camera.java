@@ -1,15 +1,9 @@
 package mycraft.camera;
 
-import javafx.geometry.Point3D;
 import javafx.scene.PerspectiveCamera;
-import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.robot.Robot;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
-import mycraft.gameobject.GameObject;
 import mycraft.gameobject.GameObjectBase;
-import mycraft.gameobject.GameScene;
 import mycraft.movement.SmoothRotateBehavior;
 import mycraft.movement.SmoothTranslateBehavior;
 
