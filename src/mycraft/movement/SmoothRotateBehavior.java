@@ -13,7 +13,7 @@ public class SmoothRotateBehavior extends GameObjectComponent {
 
 	@Override
 	public void onUpdate(double elapsedSeconds) {
-		getParent().setRotation(getParent().getRotation().multiply(snappyness).add(
-				getParent().getTargetRotation().multiply(1.0 - snappyness)));
+		getParentObject().setRotation(getParentObject().getRotation().multiply(snappyness).add(
+				getParentObject().getTargetRotation().multiply(1.0 - snappyness)));
 	}
 }

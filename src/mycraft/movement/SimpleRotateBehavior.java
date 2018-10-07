@@ -10,6 +10,6 @@ public class SimpleRotateBehavior extends GameObjectComponent {
 
 	@Override
 	public void onUpdate(double elapsedSeconds) {
-		getParent().setRotation(getParent().getTargetRotation());
+		getParentObject().setRotation(getParentObject().getTargetRotation());
 	}
 }

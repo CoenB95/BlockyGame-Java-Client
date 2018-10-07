@@ -1,15 +1,17 @@
 package mycraft.gameobject;
 
 public abstract class GameObjectComponent {
-	private GameObject parent;
+	private GameObject parentObject;
 
-	protected GameObject getParent() {
-		return parent;
+	protected GameObject getParentObject() {
+		return parentObject;
 	}
 
+	protected void onAddedToObject(GameObject parent) {}
 	public abstract void onUpdate(double elapsedSeconds);
 
-	public void setParent(GameObject parent) {
-		this.parent = parent;
+	public final void setParentObject(GameObject parent) {
+		parentObject = parent;
+		onAddedToObject(parentObject);
 	}
 }

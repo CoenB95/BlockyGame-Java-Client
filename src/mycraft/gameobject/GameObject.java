@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class GameObject {
+	private GameScene parentScene;
 	private List<GameObjectComponent> components = new ArrayList<>();
 	private Position position;
 	private Rotation rotation;
@@ -20,12 +21,16 @@ public abstract class GameObject {
 	}
 
 	public void addComponent(GameObjectComponent component) {
-		component.setParent(this);
+		component.setParentObject(this);
 		components.add(component);
 	}
 
 	public List<GameObjectComponent> getComponents() {
 		return Collections.unmodifiableList(components);
+	}
+
+	public GameScene getParentScene() {
+		return parentScene;
 	}
 
 	public Position getPosition() {
@@ -44,8 +49,14 @@ public abstract class GameObject {
 		return targetRotation;
 	}
 
+	protected void onAddedToScene(GameScene parent) {}
 	public void onUpdate(double elapsedSeconds) {
 		components.forEach(c -> c.onUpdate(elapsedSeconds));
+	}
+
+	public final void setParentScene(GameScene scene){
+		parentScene = scene;
+		onAddedToScene(parentScene);
 	}
 
 	public void setPosition(Position position) {

@@ -12,7 +12,7 @@ public class SmoothTranslateBehavior extends GameObjectComponent {
 
 	@Override
 	public void onUpdate(double elapsedSeconds) {
-		getParent().setPosition(getParent().getPosition().multiply(snappyness).add(
-				getParent().getTargetPosition().multiply(1.0 - snappyness)));
+		getParentObject().setPosition(getParentObject().getPosition().multiply(snappyness).add(
+				getParentObject().getTargetPosition().multiply(1.0 - snappyness)));
 	}
 }

@@ -10,6 +10,6 @@ public class SimpleTranslateBehavior extends GameObjectComponent {
 
 	@Override
 	public void onUpdate(double elapsedSeconds) {
-		getParent().setPosition(getParent().getTargetPosition());
+		getParentObject().setPosition(getParentObject().getTargetPosition());
 	}
 }

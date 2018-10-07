@@ -8,15 +8,15 @@ import javafx.scene.robot.Robot;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import mycraft.gameobject.GameObject;
+import mycraft.gameobject.GameObjectBase;
+import mycraft.gameobject.GameScene;
 import mycraft.movement.SmoothRotateBehavior;
 import mycraft.movement.SmoothTranslateBehavior;
 
-public class Camera extends GameObject {
+public class Camera extends GameObjectBase {
 	public static final double DEFAULT_SENSITIVITY = 0.2;
 
 	private javafx.scene.Camera camera;
-	private Rotate horizontalRotate;
-	private Rotate verticalRotate;
 
 	private double horizontalSensitivity;
 	private double verticalSensitivity;
@@ -27,28 +27,21 @@ public class Camera extends GameObject {
 	 */
 	private boolean ignoreFirstMovement = false;
 
-	public Camera(Scene scene) {
-		this(scene, DEFAULT_SENSITIVITY);
+	public Camera() {
+		this(DEFAULT_SENSITIVITY);
 		addComponent(new SmoothRotateBehavior(0.8));
 		addComponent(new SmoothTranslateBehavior(0.8));
 	}
 
-	public Camera(Scene scene, double sensitivity) {
+	public Camera(double sensitivity) {
 		horizontalSensitivity = sensitivity;
 		verticalSensitivity = sensitivity;
-		horizontalRotate = new Rotate(0, 0, 0, 0, new Point3D(0, 1, 0));
-		verticalRotate = new Rotate(0, 0, 0, 0, new Point3D(1, 0, 0));
-		Translate translation = new Translate(0, 0, 0);
 		camera = new PerspectiveCamera(true);
 		camera.setNearClip(200);
 		camera.setFarClip(9000);
-		camera.getTransforms().addAll(
-				translation,
-				horizontalRotate,
-				verticalRotate
-		);
-		scene.setCamera(camera);
+
 		setTargetPosition(getPosition().withY(400));
+		setNode(camera);
 	}
 
 	public void applyMouseMoved(MouseEvent event) {
@@ -73,10 +66,5 @@ public class Camera extends GameObject {
 	@Override
 	public void onUpdate(double elapsedSeconds) {
 		super.onUpdate(elapsedSeconds);
-		camera.setTranslateX(getPosition().getX());
-		camera.setTranslateY(-getPosition().getY());
-		camera.setTranslateZ(getPosition().getZ());
-		horizontalRotate.setAngle(getRotation().getHorizontal());
-		verticalRotate.setAngle(getRotation().getVertical());
 	}
 }

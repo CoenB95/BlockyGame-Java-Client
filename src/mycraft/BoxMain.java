@@ -10,7 +10,8 @@ import javafx.scene.input.PickResult;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import mycraft.camera.Camera;
-import mycraft.gameobject.GameObjectComponent;
+import mycraft.gameobject.GameScene;
+import mycraft.math.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
 public class BoxMain extends Application {
 
 	public static DoubleProperty cameraAngle = new SimpleDoubleProperty();
+	private GameScene mainScene;
 	private Camera camera;
 	private boolean escape = true;
 
@@ -37,16 +39,18 @@ public class BoxMain extends Application {
 
 		Scene scene = new Scene(group, 600, 400, true, SceneAntialiasing.BALANCED);
 		scene.setFill(Color.DARKBLUE);
-		camera = new Camera(scene);
 
 		LightBase light = new AmbientLight();
 		group.getChildren().add(light);
+
+		mainScene = new GameScene(group);
+		camera = new Camera();
 
 		//Walking
 		new AnimationTimer() {
 			@Override
 			public void handle(long now) {
-				camera.onUpdate(0.013);
+				mainScene.onUpdate(0.013);
 				if (movingForward) {
 					double newCX = camera.getTargetPosition().getX() + Math.cos(Math.toRadians(camera.getRotation().getHorizontal() - 90)) * 20;
 					double newCZ = camera.getTargetPosition().getZ() - Math.sin(Math.toRadians(camera.getRotation().getHorizontal() - 90)) * 20;
@@ -69,12 +73,13 @@ public class BoxMain extends Application {
 		for (int x = 0; x < 3; x++) {
 			for (int z = 0; z < 3; z++) {
 				Terrain terrain = Terrain.generateRandom(blockSize, size, size, 2);
-				terrain.setTranslateX(size * blockSize * x);
-				terrain.setTranslateZ(size * blockSize * z);
-				group.getChildren().add(terrain);
+				terrain.setPosition(new Position(size * blockSize * x, 0, (size * blockSize * z)));
 				chunks.add(terrain);
 			}
 		}
+
+		mainScene.addObject(camera);
+		mainScene.addObjects(chunks);
 
 		scene.setOnKeyPressed(event -> {
 			if (event.getCode() == KeyCode.ESCAPE) {
@@ -99,10 +104,11 @@ public class BoxMain extends Application {
 			camera.applyMouseMoved(event);
 
 			PickResult pickResult = event.getPickResult();
-			if (!(pickResult.getIntersectedNode() instanceof Terrain))
+			if (!(pickResult.getIntersectedNode() instanceof ChunkView))
 				return;
-			int blockNr = ((Terrain) pickResult.getIntersectedNode()).findBlockByFace(pickResult.getIntersectedFace());
-			((Terrain) pickResult.getIntersectedNode()).markBlock(blockNr);
+			int blockNr = ((ChunkView) pickResult.getIntersectedNode()).getChunk()
+					.findBlockByFace(pickResult.getIntersectedFace());
+			((ChunkView) pickResult.getIntersectedNode()).getChunk().markBlock(blockNr);
 		});
 
 		primaryStage.setScene(scene);

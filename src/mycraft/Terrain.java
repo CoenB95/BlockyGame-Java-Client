@@ -6,6 +6,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
+import mycraft.gameobject.GameObject;
+import mycraft.gameobject.GameObjectBase;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -16,8 +18,8 @@ import static mycraft.data.FaceUtils.*;
  * @author Coen Boelhouwers
  * @version 1.0
  */
-public class Terrain extends MeshView {
-
+public class Terrain extends GameObjectBase {
+	private ChunkView meshView;
 	private List<Integer> blockData;
 	private FaceUtils faceMap;
 	private float blockWidth;
@@ -55,8 +57,14 @@ public class Terrain extends MeshView {
 		this.blockWidth = blockWidth;
 		this.blockHeight = blockHeight;
 		this.blockDepth = blockDepth;
-		this.faceMap = new FaceUtils();//FXCollections.observableList(new ArrayList<>());
-		setMaterial(new PhongMaterial(Color.WHITE, new Image("/cube.png", 100, 100, true, false), null, null, null));
+		this.faceMap = new FaceUtils();
+
+		meshView = new ChunkView(this);
+		meshView.setMaterial(new PhongMaterial(Color.WHITE,
+				new Image("/cube.png", 100, 100, true, false),
+				null, null, null));
+		setNode(meshView);
+
 		setBlockData(map);
 	}
 
@@ -161,34 +169,34 @@ public class Terrain extends MeshView {
 			e.printStackTrace();
 		}
 		System.out.println("Done creating faces");
-		setMesh(null);
+		meshView.setMesh(null);
 //		try {
 //			Thread.sleep(100);
 //		} catch (InterruptedException e) {
 //			e.printStackTrace();
 //		}
-		setMesh(mesh);
+		meshView.setMesh(mesh);
 	}
 
 	public int findBlockByFace(int face) {
-		return faceMap.getBlockByFace((int) Math.floor(face / 2));
+		return faceMap.getBlockByFace((int) Math.floor(face / 2.0));
 	}
 
 	private int lastMarked = -1;
 
 	public void markBlock(int blockId) {
 		if (lastMarked >= 0) {
-			FaceUtils.adjustFace(((TriangleMesh) getMesh()).getFaces(), faceMap.getFace(lastMarked, Side.TOP),
+			FaceUtils.adjustFace(((TriangleMesh) meshView.getMesh()).getFaces(), faceMap.getFace(lastMarked, Side.TOP),
 					11, 10, 0,
 					11, 0, 1);
-			FaceUtils.adjustFace(((TriangleMesh) getMesh()).getFaces(), faceMap.getFace(lastMarked, Side.LEFT),
+			FaceUtils.adjustFace(((TriangleMesh) meshView.getMesh()).getFaces(), faceMap.getFace(lastMarked, Side.LEFT),
 					0, 4,5,
 					0, 5,3);
 		}
-		FaceUtils.adjustFace(((TriangleMesh) getMesh()).getFaces(), faceMap.getFace(blockId, Side.TOP),
+		FaceUtils.adjustFace(((TriangleMesh) meshView.getMesh()).getFaces(), faceMap.getFace(blockId, Side.TOP),
 				6, 1, 2,
 				6, 2, 7);
-		FaceUtils.adjustFace(((TriangleMesh) getMesh()).getFaces(), faceMap.getFace(blockId, Side.LEFT),
+		FaceUtils.adjustFace(((TriangleMesh) meshView.getMesh()).getFaces(), faceMap.getFace(blockId, Side.LEFT),
 				6, 1, 2,
 				6, 2, 7);
 		lastMarked = blockId;
