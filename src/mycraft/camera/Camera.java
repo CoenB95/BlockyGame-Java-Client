@@ -1,18 +1,15 @@
 package mycraft.camera;
 
-import javafx.application.Platform;
 import javafx.geometry.Point3D;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.robot.Robot;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import mycraft.gameobject.GameObject;
-import mycraft.movement.SimpleTranslateBehavior;
 import mycraft.movement.SmoothRotateBehavior;
 import mycraft.movement.SmoothTranslateBehavior;
-
-import java.awt.*;
 
 public class Camera extends GameObject {
 	public static final double DEFAULT_SENSITIVITY = 0.2;
@@ -29,7 +26,6 @@ public class Camera extends GameObject {
 	 * This means that it is likely that the delta is much larger and therefore should be ignored.
 	 */
 	private boolean ignoreFirstMovement = false;
-	private boolean ignoreRobot = false;
 
 	public Camera(Scene scene) {
 		this(scene, DEFAULT_SENSITIVITY);
@@ -56,20 +52,11 @@ public class Camera extends GameObject {
 	}
 
 	public void applyMouseMoved(MouseEvent event) {
-		if (ignoreRobot) {
-			ignoreRobot = false;
-			System.out.println("Ignore robot's mouse movement");
-			return;
+		try {
+			new Robot().mouseMove(800, 450);
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
 		}
-		System.out.println("Apply user's mouse movement");
-		ignoreRobot = true;
-		Platform.runLater(() -> {
-			try {
-				new Robot().mouseMove(800, 450);
-			} catch (AWTException e) {
-				e.printStackTrace();
-			}
-		});
 
 		if (!ignoreFirstMovement) {
 			double horizontalDelta = (event.getScreenX() - 800) * horizontalSensitivity;
