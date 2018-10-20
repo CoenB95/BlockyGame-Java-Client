@@ -19,6 +19,17 @@ public class Position {
 				z + position.z);
 	}
 
+	public Position add(Rotation direction, double delta)
+	{
+		// Positive horizontal rotation == look to right.
+		// Positive vertical rotation == look up.
+		double invY = 1 - Math.abs(Math.sin(Math.toRadians(direction.getVertical())));
+		return new Position(
+				x + invY * Math.cos(Math.toRadians(90 - direction.getHorizontal())) * delta,
+				y + Math.sin(Math.toRadians(direction.getVertical())) * delta,
+				z + invY * Math.sin(Math.toRadians(90 - direction.getHorizontal())) * delta);
+	}
+
 	public Position addX(double value) {
 		return new Position(x + value, y, z);
 	}
@@ -41,6 +52,21 @@ public class Position {
 
 	public double getZ() {
 		return z;
+	}
+
+	public Position limitX(double minValue, double maxValue)
+	{
+		return new Position(x < minValue ? minValue : (x > maxValue ? maxValue : x), y, z);
+	}
+
+	public Position limitY(double minValue, double maxValue)
+	{
+		return new Position(x, y < minValue ? minValue : (y > maxValue ? maxValue : y), z);
+	}
+
+	public Position limitZ(double minValue, double maxValue)
+	{
+		return new Position(x, y, z < minValue ? minValue : (z > maxValue ? maxValue : z));
 	}
 
 	public Position multiply(double factor) {
