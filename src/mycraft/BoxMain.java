@@ -5,6 +5,9 @@ import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.*;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import mycraft.gameobject.GameScene;
 import mycraft.gamescene.MainGameScene;
@@ -20,8 +23,10 @@ public class BoxMain extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		Scene scene = new Scene(new Group(), 600, 400, true, SceneAntialiasing.BALANCED);
-		mainScene = new MainGameScene(scene);
+		Pane group = new StackPane();
+		Scene scene = new Scene(group, 600, 400);
+		scene.setFill(Color.ANTIQUEWHITE);
+		mainScene = new MainGameScene(scene, group);
 
 		//Walking
 		new AnimationTimer() {

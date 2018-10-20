@@ -49,14 +49,15 @@ public abstract class GameObject {
 		return targetRotation;
 	}
 
-	protected void onAddedToScene(GameScene parent) {}
+	protected void onAddedToScene(GameScene parent, boolean as3D) {}
+
 	public void onUpdate(double elapsedSeconds) {
 		components.forEach(c -> c.onUpdate(elapsedSeconds));
 	}
 
-	public final void setParentScene(GameScene scene){
+	public final void setParentScene(GameScene scene, boolean as3D){
 		parentScene = scene;
-		onAddedToScene(parentScene);
+		onAddedToScene(parentScene, as3D);
 	}
 
 	public void setPosition(Position position) {

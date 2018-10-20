@@ -25,14 +25,16 @@ public abstract class GameObjectBase extends GameObject {
 	}
 
 	@Override
-	protected void onAddedToScene(GameScene parent) {
+	protected void onAddedToScene(GameScene parent, boolean as3D) {
 		if (node == null)
 			return;
 
 		if (node instanceof Camera)
 			parent.setCamera((Camera) node);
+		else if (as3D)
+			parent.add3DNode(node);
 		else
-			parent.addNode(node);
+			parent.add2DNode(node);
 	}
 
 	@Override

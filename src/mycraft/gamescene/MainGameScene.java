@@ -1,10 +1,20 @@
 package mycraft.gamescene;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import mycraft.ChunkView;
 import mycraft.Terrain;
 import mycraft.camera.Camera;
@@ -30,9 +40,12 @@ public class MainGameScene extends GameScene {
 
 	private Camera camera;
 	private List<Terrain> chunks;
+	private StringProperty coordinateText = new SimpleStringProperty();
+	private StringProperty debugText = new SimpleStringProperty();
+	private StringProperty escapeText = new SimpleStringProperty();
 
-	public MainGameScene(Scene scene) {
-		super(scene);
+	public MainGameScene(Scene scene, Pane root) {
+		super(scene, root);
 
 		camera = new Camera();
 
@@ -45,8 +58,18 @@ public class MainGameScene extends GameScene {
 			}
 		}
 
-		addObject(camera);
-		addObjects(chunks);
+		debugText.bind(Bindings.concat(coordinateText, escapeText));
+
+		Label t = new Label();
+		t.textProperty().bind(debugText);
+		t.setFont(Font.font("Monospaced"));
+		t.setTextFill(Color.WHITE);
+		t.setBackground(new Background(new BackgroundFill(new Color(0, 0, 0, 0.3), null, null)));
+		t.setPadding(new Insets(5));
+
+		add2DNode(t);
+		add3DObject(camera);
+		add3DObjects(chunks);
 	}
 
 	private Terrain getChunk(Position position)
@@ -90,7 +113,6 @@ public class MainGameScene extends GameScene {
 	public void onUpdate(double elapsedSeconds) {
 		super.onUpdate(elapsedSeconds);
 
-		Terrain currentChunk = getChunk(camera.getPosition());
 		double horAngle = 0;
 		double verAngle = 0;
 		boolean walk = true;
@@ -119,35 +141,24 @@ public class MainGameScene extends GameScene {
 			if (sneak)
 				targetDelta = targetDelta.add(new Rotation(0, -90, 0), 20);
 
-			//targetDelta = targetDelta.withY(0);
-			Terrain nextChunk = getChunk(camera.getTargetPosition().add(targetDelta));
-			//double newCX = camera.getTargetPosition().getX() + Math.cos(Math.toRadians(camera.getRotation().getHorizontal() - 90)) * 20;
-			//double newCZ = camera.getTargetPosition().getZ() - Math.sin(Math.toRadians(camera.getRotation().getHorizontal() - 90)) * 20;
-			//int chunkX = (int) Math.round(newCX / size / blockSize);
-			//int chunkZ = (int) Math.round(newCZ / size / blockSize);
-			//int chunkIndex = chunkX * 3 + chunkZ;
-			double chunkBlockX = camera.getPosition().getX() % (size * blockSize);
-			double chunkBlockZ = camera.getPosition().getZ() % (size * blockSize);
-			if (currentChunk != null) {
-				System.out.format("x: %5.0f, y: %5.0f, z: %5.0f (chunk %3.0f, %3.0f | block %2.0f, %2.0f) ",
-						camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(),
-						currentChunk.getPosition().getX() / size / blockSize, currentChunk.getPosition().getZ() / size / blockSize,
-						chunkBlockX / blockSize, chunkBlockZ / blockSize);
-			}
-			if (nextChunk == null) {
-				System.out.println("end-of-world");
-			} else {
-				System.out.println("safe");
-			}
-			/*if (chunkX < 0 || chunkX >= 3)
-				newCX = camera.getTargetPosition().getX();
-			if (chunkZ < 0 || chunkZ >= 3)
-				newCZ = camera.getTargetPosition().getZ();*/
-
 			camera.setTargetPosition(camera.getTargetPosition()
 					.add(targetDelta)
 					.limitX(-0.5 * size * blockSize, 2.5 * size * blockSize)
 					.limitZ(-0.5 * size * blockSize, 2.5 * size * blockSize));
 		}
+
+		Terrain currentChunk = getChunk(camera.getPosition());
+		if (currentChunk != null) {
+			double globalX = 0.5 * size + Math.floor(camera.getPosition().getX() / blockSize);
+			double globalY = 0.5 * size + Math.floor(camera.getPosition().getY() / blockSize);
+			double globalZ = 0.5 * size + Math.floor(camera.getPosition().getZ() / blockSize);
+			double chunkX = Math.abs(globalX) % size;
+			double chunkZ = Math.abs(globalZ) % size;
+			coordinateText.set(String.format("x: %2.0f y: %2.0f z: %2.0f (block %2.0f,%2.0f in chunk %2.0f,%2.0f)%n",
+					globalX, globalY, globalZ,
+					chunkX, chunkZ,
+					currentChunk.getPosition().getX() / size / blockSize, currentChunk.getPosition().getZ() / size / blockSize));
+		}
+		escapeText.set(escape ? "In menu\n" : "In game");
 	}
 }
