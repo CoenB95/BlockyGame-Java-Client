@@ -52,7 +52,7 @@ public class MainGameScene extends GameScene {
 		chunks = new ArrayList<>();
 		for (int x = 0; x < 3; x++) {
 			for (int z = 0; z < 3; z++) {
-				Terrain terrain = Terrain.generateRandom(blockSize, size, size, 2);
+				Terrain terrain = Terrain.generateRandom(this, blockSize, size, size, 2);
 				terrain.setPosition(new Position(size * blockSize * x, 0, (size * blockSize * z)));
 				chunks.add(terrain);
 			}

@@ -1,5 +1,7 @@
 package mycraft;
 
+import javafx.scene.Group;
+import javafx.scene.shape.VertexFormat;
 import mycraft.data.FaceUtils;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -8,6 +10,8 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 import mycraft.gameobject.GameObject;
 import mycraft.gameobject.GameObjectBase;
+import mycraft.gameobject.GameScene;
+import mycraft.math.Position;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -21,6 +25,7 @@ import static mycraft.data.FaceUtils.*;
 public class Terrain extends GameObjectBase {
 	private ChunkView meshView;
 	private List<Integer> blockData;
+	private List<Block> blocks;
 	private FaceUtils faceMap;
 	private float blockWidth;
 	private float blockHeight;
@@ -49,7 +54,7 @@ public class Terrain extends GameObjectBase {
 			0.5f,	0.0f	// 11
 	};
 
-	public Terrain(float blockWidth, float blockDepth, float blockHeight,
+	public Terrain(GameScene scene, float blockWidth, float blockDepth, float blockHeight,
 				   int dataWidth, int dataDepth, int dataHeight, List<Integer> map) {
 		this.dataWidth = dataWidth;
 		this.dataHeight = dataHeight;
@@ -63,13 +68,29 @@ public class Terrain extends GameObjectBase {
 		meshView.setMaterial(new PhongMaterial(Color.WHITE,
 				new Image("/cube.png", 100, 100, true, false),
 				null, null, null));
-		setNode(meshView);
+		//setNode(meshView);
 
-		setBlockData(map);
+		//setBlockData(map);
+		blocks = new ArrayList<>();
+		for (int blockY = 0; blockY < dataHeight; blockY++) {
+			for (int blockZ = 0; blockZ < dataDepth; blockZ++) {
+				for (int blockX = 0; blockX < dataWidth; blockX++) {
+					int blockId = blockY * dataWidth * dataDepth + blockZ * dataWidth + blockX;
+					int blockState = map.get(blockId);
+					Block block = new Block(blockWidth, blockHeight, blockDepth, blockState);
+					//block.setPosition(new Position(blockX, blockY, blockZ));
+					block.setPosition(new Position(blockX * blockWidth, blockY * blockHeight, blockZ * blockDepth));
+					blocks.add(block);
+					block.buildStandalone();
+				}
+			}
+		}
+		scene.add3DObjects(blocks);
+		//build(new TriangleMesh(VertexFormat.POINT_NORMAL_TEXCOORD));
 	}
 
 	private void build(TriangleMesh mesh) {
-		try {
+		/*try {
 			mesh.getTexCoords().setAll(TEX_COORDS);
 			float minX = -(blockWidth * dataWidth / 2);
 			float minY = blockWidth / 2;
@@ -167,9 +188,25 @@ public class Terrain extends GameObjectBase {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		System.out.println("Done creating faces");
-		meshView.setMesh(null);
+		}*/
+
+		/*for (int blockY = 0; blockY < dataHeight; blockY++) {
+			for (int blockZ = 0; blockZ < dataDepth; blockZ++) {
+				for (int blockX = 0; blockX < dataWidth; blockX++) {
+					int blockId = blockY * dataWidth * dataDepth + blockZ * dataWidth + blockX;
+					int blockState = blockData.get(blockId);
+					Block block = new Block(blockWidth, blockHeight, blockDepth);
+					block.setPosition(new Position(blockX, blockY, blockZ));
+					if (blockState != 0)
+						block.buildEmbedded(mesh);
+				}
+			}
+		}*/
+
+		blocks.forEach(block -> block.buildEmbedded(mesh));
+
+		//System.out.println("Done creating faces");
+		//meshView.setMesh(null);
 //		try {
 //			Thread.sleep(100);
 //		} catch (InterruptedException e) {
@@ -202,11 +239,11 @@ public class Terrain extends GameObjectBase {
 		lastMarked = blockId;
 	}
 
-	public static Terrain generateRandom(float blockSize, int gridWidth, int gridDepth, int gridHeight) {
+	public static Terrain generateRandom(GameScene scene,float blockSize, int gridWidth, int gridDepth, int gridHeight) {
 		List<Integer> blockData = new ArrayList<>(gridWidth * gridDepth);
 		for (int i = 0; i < gridWidth * gridDepth * gridHeight; i++)
 			blockData.add(i < gridWidth * gridDepth ? 1 : Math.random() > 0.8 ? 1 : 0);
-		return new Terrain(blockSize, blockSize, blockSize, gridWidth, gridDepth, gridHeight, blockData);
+		return new Terrain(scene, blockSize, blockSize, blockSize, gridWidth, gridDepth, gridHeight, blockData);
 	}
 
 	public List<Integer> getBlockData() {
@@ -215,8 +252,17 @@ public class Terrain extends GameObjectBase {
 
 	public void setBlockData(List<Integer> blockData) {
 		this.blockData = blockData;
-		TriangleMesh mesh = new TriangleMesh();
+		TriangleMesh mesh = new TriangleMesh(VertexFormat.POINT_NORMAL_TEXCOORD);
 		//setMesh(mesh);
 		CompletableFuture.runAsync(() -> build(mesh));
+	}
+
+	@Override
+	public void onUpdate(double elapsedSeconds) {
+		super.onUpdate(elapsedSeconds);
+		//blocks.forEach(b -> b.onUpdate(elapsedSeconds));
+		//TriangleMesh mesh = new TriangleMesh(VertexFormat.POINT_NORMAL_TEXCOORD);
+		//CompletableFuture.runAsync(() -> blocks.forEach(block -> block.buildEmbedded(mesh)))
+		//		.thenAccept((e) -> meshView.setMesh(mesh));
 	}
 }

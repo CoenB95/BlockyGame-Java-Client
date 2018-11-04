@@ -2,101 +2,161 @@ package mycraft;
 
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
+import javafx.scene.shape.VertexFormat;
+import mycraft.gameobject.GameObjectBase;
 
 /**
  * @author Coen Boelhouwers
  * @version 1.0
  */
-public class Block extends MeshView {
+public class Block extends GameObjectBase {
+	private MeshView meshView;
+	private TriangleMesh triangleMesh;
+	private float blockDepth;
+	private float blockHeight;
+	private float blockWidth;
+	private int blockState;
+	private float rize;
 
-	public Block(double w, double h, double d) {
-		this(w, h, d, new PhongMaterial());
+	public Block(double w, double h, double d, int state) {
+		blockWidth = (float) w;
+		blockHeight = (float) h;
+		blockDepth = (float) d;
+		blockState = state;
+		rize = (float) (Math.random() * blockHeight);
 	}
 
-	public Block(double w, double h, double d, Color color) {
-		this(w, h, d, new PhongMaterial(color));
+	public void buildEmbedded(TriangleMesh mesh) {
+		buildFaces(mesh, true);
 	}
 
-	public Block(double w, double h, double d, String image) {
-		this(w, h, d, new PhongMaterial(Color.WHITE, new Image(image), null,
-				null, null));
+	public void buildStandalone() {
+		triangleMesh = new TriangleMesh(VertexFormat.POINT_NORMAL_TEXCOORD);
+		buildFaces(triangleMesh,false);
+		meshView = new MeshView(triangleMesh);
+		meshView.setMaterial(new PhongMaterial(Color.WHITE,
+				new Image("/cube.png", 100, 100, true, false),
+				null, null, null));
+		setNode(meshView);
 	}
 
-	public Block(double w, double h, double d, Material material) {
-		super(createMesh((float) w, (float) h, (float) d));
-		setMaterial(material);
-	}
+	public void buildFaces(TriangleMesh mesh, boolean applyOffset)
+	{
+		if (blockState == 0)
+			return;
 
-	private static TriangleMesh createMesh(float w, float h, float d) {
-		float hw = w / 2f;
-		float hh = h / 2f;
-		float hd = d / 2f;
+		float x = (applyOffset ? (float) getPosition().getX() : 0) * blockWidth;
+		float y = (applyOffset ? (float) -getPosition().getY() : 0) * blockHeight;
+		float z = (applyOffset ? (float) getPosition().getZ() : 0) * blockDepth;
+		float hw = blockWidth / 2;
+		float hh = blockHeight / 2;
+		float hd = blockDepth / 2;
+		float right = x + hw;
+		float left = x - hw;
+		float bottom = y + hh;
+		float top = y - hh;
+		float back = z + hd;
+		float front = z - hd;
 
 		float points[] = {
-				//Base-Front
-				-hw, -hh, -hd,
-				hw, -hh, -hd,
-				hw, hh, -hd,
-				-hw, hh, -hd,
+				//Top
+				right, top, back,
+				left, top, back,
+				left, top, front,
+				right, top, front,
 				//Left
-				-hw, -hh, hd,
-				-hw, hh, hd,
+				left, top, front,
+				left, top, back,
+				left, bottom, back,
+				left, bottom, front,
+				//Front
+				right, top, front,
+				left, top, front,
+				left, bottom, front,
+				right, bottom, front,
 				//Right
-				hw, -hh, hd,
-				hw, hh, hd
+				right, top, back,
+				right, top, front,
+				right, bottom, front,
+				right, bottom, back,
+				//Back
+				left, top, back,
+				right, top, back,
+				right, bottom, back,
+				left, bottom, back,
+				//Bottom
+				right, bottom, front,
+				left, bottom, front,
+				left, bottom, back,
+				right, bottom, back
+		};
+
+		float normals[] = {
+				0, -1,  0, //Top
+				-1,  0,  0, //Left
+				0,  0, -1, //Front
+				1,  0,  0, //Right
+				0,  0,  1, //Back
+				0,  1,  0  //Bottom
 		};
 
 		float texCoords[] = {
-				//Base-Front
+				//Top
+				0.50f, 0.00f,
+				0.25f, 0.00f,
 				0.25f, 0.25f,
-				0.5f, 0.25f,
-				0.5f, 0.5f,
-				0.25f, 0.5f,
+				0.50f, 0.25f,
 				//Left
-				0, 0.25f,
-				0, 0.5f,
+				0.25f, 0.25f,
+				0.00f, 0.25f,
+				0.00f, 0.50f,
+				0.25f, 0.50f,
+				//Front
+				0.50f, 0.25f,
+				0.25f, 0.25f,
+				0.25f, 0.50f,
+				0.50f, 0.50f,
 				//Right
 				0.75f, 0.25f,
-				0.75f, 0.5f,
+				0.50f, 0.25f,
+				0.50f, 0.50f,
+				0.75f, 0.50f,
 				//Back
-				1, 0.25f,
-				1, 0.5f,
-				//Top
-				0.25f, 0,
-				0.5f, 0
+				1.00f, 0.25f,
+				0.75f, 0.25f,
+				0.75f, 0.50f,
+				1.00f, 0.50f,
+				//Front
+				0.50f, 0.50f,
+				0.25f, 0.50f,
+				0.25f, 0.75f,
+				0.50f, 0.75f,
 		};
 
-		int faces[] = {
-				//Front triangles
-				0,0, 3,3, 1,1,
-				1,1, 3,3, 2,2,
-				//Left
-				4,4, 5,5, 0,0,
-				0,0, 5,5, 3,3,
-				//Right
-				1,1, 2,2, 6,6,
-				6,6, 2,2, 7,7,
-				//Back
-				6,6, 7,7, 4,8,
-				4,8, 7,7, 5,9,
-				//Top
-				4,10, 0,0, 6,11,
-				6,11, 0,0, 1,1
-		};
+		int pointsOffset = mesh.getPoints().size() / 3;
+		int normalsOffset = mesh.getNormals().size() / 3;
+		int texOffset = mesh.getTexCoords().size() / 2;
 
-		int faceSmoothingGroups[] = {
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-		};
+		mesh.getPoints().addAll(points);
+		mesh.getNormals().addAll(normals);
+		mesh.getTexCoords().addAll(texCoords);
 
-		TriangleMesh mesh = new TriangleMesh();
-		mesh.getPoints().setAll(points);
-		mesh.getTexCoords().setAll(texCoords);
-		mesh.getFaces().setAll(faces);
-		mesh.getFaceSmoothingGroups().setAll(faceSmoothingGroups);
-		return mesh;
+		for (int side = 0; side < 6 ; side++) {
+			mesh.getFaces().addAll(pointsOffset + side * 4, normalsOffset + side, texOffset + side * 4);
+			mesh.getFaces().addAll(pointsOffset + side * 4 + 1, normalsOffset + side, texOffset + side * 4 + 1);
+			mesh.getFaces().addAll(pointsOffset + side * 4 + 2, normalsOffset + side, texOffset + side * 4 + 2);
+			mesh.getFaces().addAll(pointsOffset + side * 4, normalsOffset + side, texOffset + side * 4);
+			mesh.getFaces().addAll(pointsOffset + side * 4 + 2, normalsOffset + side, texOffset + side * 4 + 2);
+			mesh.getFaces().addAll(pointsOffset + side * 4 + 3, normalsOffset + side, texOffset + side * 4 + 3);
+		}
+	}
+
+	@Override
+	public void onUpdate(double elapsedSeconds) {
+		super.onUpdate(elapsedSeconds);
+		setPosition(getPosition().addY(rize * elapsedSeconds));
 	}
 }

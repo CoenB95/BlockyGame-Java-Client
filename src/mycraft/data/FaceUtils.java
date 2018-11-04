@@ -43,7 +43,7 @@ public class FaceUtils {
 	}
 
 	public int getBlockByFace(int face) {
-		return getBlockId(mapping.get(face));
+		return 0;//return getBlockId(mapping.get(face));
 	}
 
 	private int getBlockId(int data) {

@@ -13,14 +13,13 @@ public abstract class GameObjectBase extends GameObject {
 	private Rotate verticalRotateTransform;
 
 	public GameObjectBase() {
-
+		translateTransform = new Translate(0, 0, 0);
+		horizontalRotateTransform = new Rotate(0, 0, 0, 0, new Point3D(0, 1, 0));
+		verticalRotateTransform = new Rotate(0, 0, 0, 0, new Point3D(1, 0, 0));
 	}
 
 	protected void setNode(Node node) {
 		this.node = node;
-		translateTransform = new Translate(0, 0, 0);
-		horizontalRotateTransform = new Rotate(0, 0, 0, 0, new Point3D(0, 1, 0));
-		verticalRotateTransform = new Rotate(0, 0, 0, 0, new Point3D(1, 0, 0));
 		node.getTransforms().addAll(translateTransform, horizontalRotateTransform, verticalRotateTransform);
 	}
 
