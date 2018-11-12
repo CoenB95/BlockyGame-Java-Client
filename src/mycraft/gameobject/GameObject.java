@@ -53,6 +53,8 @@ public abstract class GameObject {
 
 	public void onUpdate(double elapsedSeconds) {
 		components.forEach(c -> c.onUpdate(elapsedSeconds));
+		rotation = targetRotation;
+		position = targetPosition;
 	}
 
 	public final void setParentScene(GameScene scene, boolean as3D){

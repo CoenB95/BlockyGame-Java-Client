@@ -1,18 +1,21 @@
 package mycraft.movement;
 
+import mycraft.gameobject.GameObject;
 import mycraft.gameobject.GameObjectComponent;
 
 public class SmoothTranslateBehavior extends GameObjectComponent {
 
+	private GameObject subject;
 	private double snappyness;
 
-	public SmoothTranslateBehavior(double snappyness) {
+	public SmoothTranslateBehavior(GameObject subject, double snappyness) {
 		this.snappyness = snappyness;
+		this.subject = subject;
 	}
 
 	@Override
 	public void onUpdate(double elapsedSeconds) {
-		getParentObject().setPosition(getParentObject().getPosition().multiply(snappyness).add(
-				getParentObject().getTargetPosition().multiply(1.0 - snappyness)));
+		getParentObject().setTargetPosition(getParentObject().getPosition().multiply(snappyness).add(
+				subject.getPosition().multiply(1.0 - snappyness)));
 	}
 }

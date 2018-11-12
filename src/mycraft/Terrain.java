@@ -80,7 +80,7 @@ public class Terrain extends GameObjectBase {
 					int blockId = blockY * dataWidth * dataDepth + blockZ * dataWidth + blockX;
 					int blockState = blockData.get(blockId);
 					Block block = new Block(blockWidth, blockHeight, blockDepth, blockState);
-					block.setPosition(new Position(blockX * blockWidth, blockY * blockHeight, blockZ * blockDepth));
+					block.setTargetPosition(new Position(blockX * blockWidth, blockY * blockHeight, blockZ * blockDepth));
 					blocks.add(block);
 				}
 			}
@@ -95,7 +95,7 @@ public class Terrain extends GameObjectBase {
 	private void buildStandaloneBlocks(GameScene scene) {
 		blocks.forEach(b -> {
 			b.buildStandalone();
-			b.addComponent(new FollowComponent(this, b.getPosition()));
+			b.addComponent(new FollowComponent(this, b.getTargetPosition()));
 		});
 		scene.add3DObjects(blocks);
 	}

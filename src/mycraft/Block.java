@@ -157,6 +157,6 @@ public class Block extends GameObjectBase {
 	@Override
 	public void onUpdate(double elapsedSeconds) {
 		super.onUpdate(elapsedSeconds);
-		setPosition(getPosition().addY(rize * elapsedSeconds));
+		setTargetPosition(getPosition().addY(rize * elapsedSeconds));
 	}
 }

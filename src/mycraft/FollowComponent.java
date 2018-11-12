@@ -15,6 +15,6 @@ public class FollowComponent extends GameObjectComponent {
 
 	@Override
 	public void onUpdate(double elapsedSeconds) {
-		getParentObject().setPosition(objectToFollow.getPosition().withY(getParentObject().getPosition().getY()).add(offsetFromObject));
+		getParentObject().setTargetPosition(objectToFollow.getPosition().add(offsetFromObject).withY(getParentObject().getTargetPosition().getY()));
 	}
 }

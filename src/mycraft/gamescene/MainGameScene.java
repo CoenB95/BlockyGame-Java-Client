@@ -16,11 +16,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import mycraft.ChunkView;
+import mycraft.Steve;
 import mycraft.Terrain;
 import mycraft.camera.Camera;
 import mycraft.gameobject.GameScene;
 import mycraft.math.Position;
 import mycraft.math.Rotation;
+import mycraft.movement.SmoothRotateBehavior;
+import mycraft.movement.SmoothTranslateBehavior;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +41,7 @@ public class MainGameScene extends GameScene {
 	private int size = 16;
 	private int blockSize = 200;
 
+	private Steve steve;
 	private Camera camera;
 	private List<Terrain> chunks;
 	private StringProperty coordinateText = new SimpleStringProperty();
@@ -47,13 +51,16 @@ public class MainGameScene extends GameScene {
 	public MainGameScene(Scene scene, Pane root) {
 		super(scene, root);
 
+		steve = new Steve();
 		camera = new Camera();
+		camera.addComponent(new SmoothRotateBehavior(steve,0.8));
+		camera.addComponent(new SmoothTranslateBehavior(steve, 0.8));
 
 		chunks = new ArrayList<>();
 		for (int x = 0; x < 3; x++) {
 			for (int z = 0; z < 3; z++) {
 				Terrain terrain = Terrain.generateRandom(this, blockSize, size, size, 2);
-				terrain.setPosition(new Position(size * blockSize * x, 0, (size * blockSize * z)));
+				terrain.setTargetPosition(new Position(size * blockSize * x, 0, (size * blockSize * z)));
 				chunks.add(terrain);
 			}
 		}
@@ -68,6 +75,7 @@ public class MainGameScene extends GameScene {
 		t.setPadding(new Insets(5));
 
 		add2DNode(t);
+		add3DObject(steve);
 		add3DObject(camera);
 		add3DObjects(chunks);
 	}
@@ -88,7 +96,7 @@ public class MainGameScene extends GameScene {
 		super.onKeyPressed(event);
 		if (event.getCode() == KeyCode.ESCAPE) {
 			escape = !escape;
-			if (!escape) camera.notifyFirstMovement();
+			if (!escape) steve.notifyFirstMovement();
 			else System.out.println("escape");
 		}
 	}
@@ -99,7 +107,7 @@ public class MainGameScene extends GameScene {
 		if (escape)
 			return;
 
-		camera.applyMouseMoved(event);
+		steve.applyMouseMoved(event);
 
 		PickResult pickResult = event.getPickResult();
 		if (!(pickResult.getIntersectedNode() instanceof ChunkView))
@@ -131,7 +139,7 @@ public class MainGameScene extends GameScene {
 			walk = false;
 
 		if (walk || jump || sneak) {
-			Rotation direction = camera.getRotation().addHorizontal(horAngle).withVertical(verAngle);
+			Rotation direction = steve.getRotation().addHorizontal(horAngle).withVertical(verAngle);
 
 			Position targetDelta = Position.ORIGIN;
 			if (walk)
@@ -141,17 +149,17 @@ public class MainGameScene extends GameScene {
 			if (sneak)
 				targetDelta = targetDelta.add(new Rotation(0, -90, 0), 20);
 
-			camera.setTargetPosition(camera.getTargetPosition()
+			steve.setTargetPosition(steve.getTargetPosition()
 					.add(targetDelta)
 					.limitX(-0.5 * size * blockSize, 2.5 * size * blockSize)
 					.limitZ(-0.5 * size * blockSize, 2.5 * size * blockSize));
 		}
 
-		Terrain currentChunk = getChunk(camera.getPosition());
+		Terrain currentChunk = getChunk(steve.getPosition());
 		if (currentChunk != null) {
-			double globalX = 0.5 * size + Math.floor(camera.getPosition().getX() / blockSize);
-			double globalY = 0.5 * size + Math.floor(camera.getPosition().getY() / blockSize);
-			double globalZ = 0.5 * size + Math.floor(camera.getPosition().getZ() / blockSize);
+			double globalX = 0.5 * size + Math.floor(steve.getPosition().getX() / blockSize);
+			double globalY = 0.5 * size + Math.floor(steve.getPosition().getY() / blockSize);
+			double globalZ = 0.5 * size + Math.floor(steve.getPosition().getZ() / blockSize);
 			double chunkX = Math.abs(globalX) % size;
 			double chunkZ = Math.abs(globalZ) % size;
 			coordinateText.set(String.format("x: %2.0f y: %2.0f z: %2.0f (block %2.0f,%2.0f in chunk %2.0f,%2.0f)%n",
