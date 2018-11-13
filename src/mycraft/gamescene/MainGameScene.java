@@ -1,5 +1,9 @@
 package mycraft.gamescene;
 
+import gamo.math.Position;
+import gamo.math.Rotation;
+import gamo.objects.Camera;
+import gamo.scenes.GameScene;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -18,10 +22,7 @@ import javafx.scene.text.Font;
 import mycraft.ChunkView;
 import mycraft.Steve;
 import mycraft.Terrain;
-import mycraft.camera.Camera;
-import mycraft.gameobject.GameScene;
-import mycraft.math.Position;
-import mycraft.math.Rotation;
+import mycraft.TextObject;
 import mycraft.movement.SmoothRotateBehavior;
 import mycraft.movement.SmoothTranslateBehavior;
 
@@ -52,7 +53,7 @@ public class MainGameScene extends GameScene {
 		super(scene, root);
 
 		steve = new Steve();
-		camera = new Camera();
+		camera = new Camera(200, 9000);
 		camera.addComponent(new SmoothRotateBehavior(steve,0.8));
 		camera.addComponent(new SmoothTranslateBehavior(steve, 0.8));
 
@@ -67,17 +68,14 @@ public class MainGameScene extends GameScene {
 
 		debugText.bind(Bindings.concat(coordinateText, escapeText));
 
-		Label t = new Label();
-		t.textProperty().bind(debugText);
-		t.setFont(Font.font("Monospaced"));
-		t.setTextFill(Color.WHITE);
-		t.setBackground(new Background(new BackgroundFill(new Color(0, 0, 0, 0.3), null, null)));
-		t.setPadding(new Insets(5));
+		TextObject label = new TextObject();
+		label.textProperty().bind(debugText);
 
-		add2DNode(t);
 		add3DObject(steve);
 		add3DObject(camera);
 		add3DObjects(chunks);
+		add2DObject(label);
+		setCamera(camera.camera);
 	}
 
 	private Terrain getChunk(Position position)

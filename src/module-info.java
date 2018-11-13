@@ -1,5 +1,7 @@
 module MyCraft {
 	exports mycraft;
-	exports mycraft.gameobject;
+
+	requires javafx.graphics;
 	requires javafx.controls;
+	requires GamO;
 }

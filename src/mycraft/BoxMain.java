@@ -1,5 +1,6 @@
 package mycraft;
 
+import gamo.scenes.GameScene;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
@@ -9,7 +10,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import mycraft.gameobject.GameScene;
 import mycraft.gamescene.MainGameScene;
 
 /**

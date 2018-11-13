@@ -1,8 +1,8 @@
 package mycraft;
 
+import gamo.objects.GameObjectBase;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.robot.Robot;
-import mycraft.gameobject.GameObjectBase;
 
 public class Steve extends GameObjectBase {
 	public static final double DEFAULT_SENSITIVITY = 0.2;

@@ -1,8 +1,8 @@
 package mycraft;
 
-import mycraft.gameobject.GameObject;
-import mycraft.gameobject.GameObjectComponent;
-import mycraft.math.Position;
+import gamo.components.GameObjectComponent;
+import gamo.math.Position;
+import gamo.objects.GameObject;
 
 public class FollowComponent extends GameObjectComponent {
 	private GameObject objectToFollow;

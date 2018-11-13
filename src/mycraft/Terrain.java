@@ -1,20 +1,18 @@
 package mycraft;
 
+import gamo.math.Position;
+import gamo.objects.GameObjectBase;
+import gamo.scenes.GameScene;
 import javafx.application.Platform;
-import javafx.scene.Group;
-import javafx.scene.shape.VertexFormat;
-import mycraft.data.FaceUtils;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
-import mycraft.gameobject.GameObject;
-import mycraft.gameobject.GameObjectBase;
-import mycraft.gameobject.GameScene;
-import mycraft.math.Position;
+import javafx.scene.shape.VertexFormat;
+import mycraft.data.FaceUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static mycraft.data.FaceUtils.*;

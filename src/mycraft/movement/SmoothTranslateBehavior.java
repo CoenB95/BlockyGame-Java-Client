@@ -1,7 +1,7 @@
 package mycraft.movement;
 
-import mycraft.gameobject.GameObject;
-import mycraft.gameobject.GameObjectComponent;
+import gamo.components.GameObjectComponent;
+import gamo.objects.GameObject;
 
 public class SmoothTranslateBehavior extends GameObjectComponent {
 

@@ -1,12 +1,12 @@
 package mycraft;
 
+import gamo.objects.GameObjectBase;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.shape.VertexFormat;
-import mycraft.gameobject.GameObjectBase;
 
 /**
  * @author Coen Boelhouwers
