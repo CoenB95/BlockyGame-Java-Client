@@ -1,8 +1,8 @@
-package mycraft.movement;
+package com.cbapps.javafx.mycraft.movement;
 
-import gamo.components.GameObjectComponent;
-import gamo.math.Rotation;
-import gamo.objects.GameObject;
+import com.cbapps.javafx.gamo.components.GameObjectComponent;
+import com.cbapps.javafx.gamo.math.Rotation;
+import com.cbapps.javafx.gamo.objects.GameObject;
 
 public class SmoothRotateBehavior extends GameObjectComponent {
 

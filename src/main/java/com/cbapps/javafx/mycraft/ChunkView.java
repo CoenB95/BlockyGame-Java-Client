@@ -1,4 +1,4 @@
-package mycraft;
+package com.cbapps.javafx.mycraft;
 
 import javafx.scene.shape.MeshView;
 

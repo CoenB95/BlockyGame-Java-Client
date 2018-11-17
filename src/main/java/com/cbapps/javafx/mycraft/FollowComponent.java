@@ -1,8 +1,8 @@
-package mycraft;
+package com.cbapps.javafx.mycraft;
 
-import gamo.components.GameObjectComponent;
-import gamo.math.Position;
-import gamo.objects.GameObject;
+import com.cbapps.javafx.gamo.components.GameObjectComponent;
+import com.cbapps.javafx.gamo.math.Position;
+import com.cbapps.javafx.gamo.objects.GameObject;
 
 public class FollowComponent extends GameObjectComponent {
 	private GameObject objectToFollow;

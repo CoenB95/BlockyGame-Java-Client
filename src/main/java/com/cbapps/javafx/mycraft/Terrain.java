@@ -1,21 +1,19 @@
-package mycraft;
+package com.cbapps.javafx.mycraft;
 
-import gamo.math.Position;
-import gamo.objects.GameObjectBase;
-import gamo.scenes.GameScene;
+import com.cbapps.javafx.gamo.math.Position;
+import com.cbapps.javafx.gamo.objects.GameObjectBase;
+import com.cbapps.javafx.gamo.scenes.GameScene;
+import com.cbapps.javafx.mycraft.data.FaceUtils;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.shape.VertexFormat;
-import mycraft.data.FaceUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-
-import static mycraft.data.FaceUtils.*;
 
 /**
  * @author Coen Boelhouwers
@@ -113,17 +111,17 @@ public class Terrain extends GameObjectBase {
 
 	public void markBlock(int blockId) {
 		if (lastMarked >= 0) {
-			FaceUtils.adjustFace(((TriangleMesh) meshView.getMesh()).getFaces(), faceMap.getFace(lastMarked, Side.TOP),
+			FaceUtils.adjustFace(((TriangleMesh) meshView.getMesh()).getFaces(), faceMap.getFace(lastMarked, FaceUtils.Side.TOP),
 					11, 10, 0,
 					11, 0, 1);
-			FaceUtils.adjustFace(((TriangleMesh) meshView.getMesh()).getFaces(), faceMap.getFace(lastMarked, Side.LEFT),
+			FaceUtils.adjustFace(((TriangleMesh) meshView.getMesh()).getFaces(), faceMap.getFace(lastMarked, FaceUtils.Side.LEFT),
 					0, 4,5,
 					0, 5,3);
 		}
-		FaceUtils.adjustFace(((TriangleMesh) meshView.getMesh()).getFaces(), faceMap.getFace(blockId, Side.TOP),
+		FaceUtils.adjustFace(((TriangleMesh) meshView.getMesh()).getFaces(), faceMap.getFace(blockId, FaceUtils.Side.TOP),
 				6, 1, 2,
 				6, 2, 7);
-		FaceUtils.adjustFace(((TriangleMesh) meshView.getMesh()).getFaces(), faceMap.getFace(blockId, Side.LEFT),
+		FaceUtils.adjustFace(((TriangleMesh) meshView.getMesh()).getFaces(), faceMap.getFace(blockId, FaceUtils.Side.LEFT),
 				6, 1, 2,
 				6, 2, 7);
 		lastMarked = blockId;

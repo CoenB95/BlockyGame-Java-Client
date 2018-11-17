@@ -1,7 +1,7 @@
-package mycraft.movement;
+package com.cbapps.javafx.mycraft.movement;
 
-import gamo.components.GameObjectComponent;
-import gamo.objects.GameObject;
+import com.cbapps.javafx.gamo.components.GameObjectComponent;
+import com.cbapps.javafx.gamo.objects.GameObject;
 
 public class SmoothTranslateBehavior extends GameObjectComponent {
 

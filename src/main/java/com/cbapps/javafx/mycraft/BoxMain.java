@@ -1,6 +1,6 @@
-package mycraft;
+package com.cbapps.javafx.mycraft;
 
-import gamo.scenes.GameScene;
+import com.cbapps.javafx.gamo.scenes.GameScene;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
@@ -10,7 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import mycraft.gamescene.MainGameScene;
+import com.cbapps.javafx.mycraft.gamescene.MainGameScene;
 
 /**
  * @author Coen Boelhouwers

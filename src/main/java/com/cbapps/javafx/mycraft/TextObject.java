@@ -1,6 +1,6 @@
-package mycraft;
+package com.cbapps.javafx.mycraft;
 
-import gamo.objects.GameObjectBase;
+import com.cbapps.javafx.gamo.objects.GameObjectBase;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;

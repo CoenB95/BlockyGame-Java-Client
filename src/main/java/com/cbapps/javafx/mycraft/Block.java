@@ -1,6 +1,6 @@
-package mycraft;
+package com.cbapps.javafx.mycraft;
 
-import gamo.objects.GameObjectBase;
+import com.cbapps.javafx.gamo.objects.GameObjectBase;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;

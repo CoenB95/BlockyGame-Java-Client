@@ -1,4 +1,4 @@
-package mycraft;
+package com.cbapps.javafx.mycraft;
 
 import javafx.geometry.Point3D;
 import javafx.geometry.Rectangle2D;
