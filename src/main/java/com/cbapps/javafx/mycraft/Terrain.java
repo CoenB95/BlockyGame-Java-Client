@@ -1,8 +1,12 @@
 package com.cbapps.javafx.mycraft;
 
+import com.cbapps.javafx.gamo.components.FollowComponent;
+import com.cbapps.javafx.gamo.components.SmoothRotationComponent;
+import com.cbapps.javafx.gamo.components.SmoothTranslationComponent;
 import com.cbapps.javafx.gamo.math.Position;
 import com.cbapps.javafx.gamo.objects.GameObjectBase;
 import com.cbapps.javafx.gamo.scenes.GameScene;
+import com.cbapps.javafx.mycraft.components.FloatingComponent;
 import com.cbapps.javafx.mycraft.data.FaceUtils;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
@@ -82,6 +86,9 @@ public class Terrain extends GameObjectBase {
 			}
 		}
 
+		addComponent(SmoothTranslationComponent.direct());
+		addComponent(SmoothRotationComponent.direct());
+
 		if (embedded)
 			buildEmbeddedBlocks(scene);
 		else
@@ -91,7 +98,10 @@ public class Terrain extends GameObjectBase {
 	private void buildStandaloneBlocks(GameScene scene) {
 		blocks.forEach(b -> {
 			b.buildStandalone();
-			b.addComponent(new FollowComponent(this, b.getTargetPosition()));
+			b.addComponent(FollowComponent.translating(this, b.getTargetPosition()));
+			b.addComponent(new FloatingComponent(Math.random() * blockHeight));
+			b.addComponent(SmoothTranslationComponent.direct());
+			b.addComponent(SmoothRotationComponent.direct());
 		});
 		scene.add3DObjects(blocks);
 	}

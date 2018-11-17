@@ -1,5 +1,8 @@
 package com.cbapps.javafx.mycraft;
 
+import com.cbapps.javafx.gamo.components.SmoothRotationComponent;
+import com.cbapps.javafx.gamo.components.SmoothTranslationComponent;
+import com.cbapps.javafx.gamo.math.RotationalDelta;
 import com.cbapps.javafx.gamo.objects.GameObjectBase;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.robot.Robot;
@@ -17,6 +20,9 @@ public class Steve extends GameObjectBase {
 
 	public Steve() {
 		this(DEFAULT_SENSITIVITY);
+
+		addComponent(SmoothTranslationComponent.direct());
+		addComponent(SmoothRotationComponent.direct());
 	}
 
 	public Steve(double sensitivity) {
@@ -34,12 +40,17 @@ public class Steve extends GameObjectBase {
 		if (!ignoreFirstMovement) {
 			double horizontalDelta = (event.getScreenX() - 800) * horizontalSensitivity;
 			double verticalDelta = -(event.getScreenY() - 450) * verticalSensitivity;
-			setTargetRotation(getTargetRotation().addHorizontal(horizontalDelta).addVertical(verticalDelta));
+			setTargetRotation(getTargetRotation().add(new RotationalDelta(horizontalDelta, verticalDelta, 0)));
 		}
 		ignoreFirstMovement = false;
 	}
 
 	public void notifyFirstMovement() {
 		ignoreFirstMovement = true;
+	}
+
+	@Override
+	public void onUpdate(double elapsedSeconds) {
+		super.onUpdate(elapsedSeconds);
 	}
 }

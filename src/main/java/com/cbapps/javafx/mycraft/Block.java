@@ -1,5 +1,8 @@
 package com.cbapps.javafx.mycraft;
 
+import com.cbapps.javafx.gamo.components.SmoothRotationComponent;
+import com.cbapps.javafx.gamo.components.SmoothTranslationComponent;
+import com.cbapps.javafx.gamo.math.PositionalDelta;
 import com.cbapps.javafx.gamo.objects.GameObjectBase;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -157,6 +160,5 @@ public class Block extends GameObjectBase {
 	@Override
 	public void onUpdate(double elapsedSeconds) {
 		super.onUpdate(elapsedSeconds);
-		setTargetPosition(getPosition().addY(rize * elapsedSeconds));
 	}
 }

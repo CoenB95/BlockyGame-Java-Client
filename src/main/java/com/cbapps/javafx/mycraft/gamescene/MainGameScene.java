@@ -1,15 +1,18 @@
 package com.cbapps.javafx.mycraft.gamescene;
 
+import com.cbapps.javafx.gamo.components.FollowComponent;
+import com.cbapps.javafx.gamo.components.SmoothRotationComponent;
+import com.cbapps.javafx.gamo.components.SmoothTranslationComponent;
 import com.cbapps.javafx.gamo.math.Position;
+import com.cbapps.javafx.gamo.math.PositionalDelta;
 import com.cbapps.javafx.gamo.math.Rotation;
+import com.cbapps.javafx.gamo.math.RotationalDelta;
 import com.cbapps.javafx.gamo.objects.Camera;
 import com.cbapps.javafx.gamo.scenes.GameScene;
 import com.cbapps.javafx.mycraft.ChunkView;
 import com.cbapps.javafx.mycraft.Steve;
 import com.cbapps.javafx.mycraft.Terrain;
 import com.cbapps.javafx.mycraft.TextObject;
-import com.cbapps.javafx.mycraft.movement.SmoothRotateBehavior;
-import com.cbapps.javafx.mycraft.movement.SmoothTranslateBehavior;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -39,8 +42,8 @@ public class MainGameScene extends GameScene {
 	private Steve steve;
 	private Camera camera;
 	private List<Terrain> chunks;
-	private StringProperty coordinateText = new SimpleStringProperty();
 	private StringProperty debugText = new SimpleStringProperty();
+	private StringProperty coordinateText = new SimpleStringProperty();
 	private StringProperty escapeText = new SimpleStringProperty();
 
 	public MainGameScene(Scene scene, Pane root) {
@@ -48,8 +51,9 @@ public class MainGameScene extends GameScene {
 
 		steve = new Steve();
 		camera = new Camera(200, 9000);
-		camera.addComponent(new SmoothRotateBehavior(steve,0.8));
-		camera.addComponent(new SmoothTranslateBehavior(steve, 0.8));
+		camera.addComponent(FollowComponent.rotatingAndTranslating(steve));
+		camera.addComponent(new SmoothRotationComponent(0.8));
+		camera.addComponent(new SmoothTranslationComponent( 0.95));
 
 		chunks = new ArrayList<>();
 		for (int x = 0; x < 3; x++) {
@@ -131,9 +135,9 @@ public class MainGameScene extends GameScene {
 			walk = false;
 
 		if (walk || jump || sneak) {
-			Rotation direction = steve.getRotation().addHorizontal(horAngle).withVertical(verAngle);
+			RotationalDelta direction = steve.getTargetRotation().withVertical(verAngle).addHorizontal(horAngle);
 
-			Position targetDelta = Position.ORIGIN;
+			PositionalDelta targetDelta = PositionalDelta.ZERO;
 			if (walk)
 				targetDelta = targetDelta.add(direction, 20);
 			if (jump)
@@ -141,10 +145,10 @@ public class MainGameScene extends GameScene {
 			if (sneak)
 				targetDelta = targetDelta.add(new Rotation(0, -90, 0), 20);
 
-			steve.setTargetPosition(steve.getTargetPosition()
+			steve.setTargetPosition(steve.getPosition()
 					.add(targetDelta)
 					.limitX(-0.5 * size * blockSize, 2.5 * size * blockSize)
-					.limitZ(-0.5 * size * blockSize, 2.5 * size * blockSize));
+					.limitZ(-0.5 * size * blockSize, 2.5 * size * blockSize).asPosition());
 		}
 
 		Terrain currentChunk = getChunk(steve.getPosition());
