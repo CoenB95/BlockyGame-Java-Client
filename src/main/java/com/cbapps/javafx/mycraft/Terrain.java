@@ -26,42 +26,10 @@ public class Terrain extends GameObjectBase {
 	private List<Integer> blockData;
 	private List<Block> blocks;
 	private FaceUtils faceMap;
-	private float blockWidth;
-	private float blockHeight;
-	private float blockDepth;
-	private int dataWidth;
-	private int dataHeight;
-	private int dataDepth;
 	private boolean embedded = false;
-
-	private static float TEX_COORDS[] = {
-			//Base-Front
-			0.25f,	0.25f,	// 0
-			0.5f,	0.25f,	// 1
-			0.5f,	0.5f,	// 2
-			0.25f,	0.5f,	// 3
-			//Left
-			0.0f,	0.25f,	// 4
-			0.0f,	0.5f,	// 5
-			//Right
-			0.75f,	0.25f,	// 6
-			0.75f,	0.5f,	// 7
-			//Back
-			1.0f,	0.25f,	// 8
-			1.0f,	0.5f,	// 9
-			//Top
-			0.25f,	0.0f,	// 10
-			0.5f,	0.0f	// 11
-	};
 
 	public Terrain(GameScene scene, float blockWidth, float blockDepth, float blockHeight,
 				   int dataWidth, int dataDepth, int dataHeight, List<Integer> map) {
-		this.dataWidth = dataWidth;
-		this.dataHeight = dataHeight;
-		this.dataDepth = dataDepth;
-		this.blockWidth = blockWidth;
-		this.blockHeight = blockHeight;
-		this.blockDepth = blockDepth;
 		this.faceMap = new FaceUtils();
 
 		meshView = new ChunkView(this);
@@ -85,12 +53,12 @@ public class Terrain extends GameObjectBase {
 		}
 
 		if (embedded)
-			buildEmbeddedBlocks(scene);
+			buildEmbeddedBlocks();
 		else
-			buildStandaloneBlocks(scene);
+			buildStandaloneBlocks(scene, blockHeight);
 	}
 
-	private void buildStandaloneBlocks(GameScene scene) {
+	private void buildStandaloneBlocks(GameScene scene, float blockHeight) {
 		blocks.forEach(b -> {
 			b.buildStandalone();
 			b.addComponent(FollowComponent.translating(this, b.getTargetPosition()));
@@ -99,7 +67,7 @@ public class Terrain extends GameObjectBase {
 		scene.add3DObjects(blocks);
 	}
 
-	private void buildEmbeddedBlocks(GameScene scene) {
+	private void buildEmbeddedBlocks() {
 		TriangleMesh mesh  = new TriangleMesh(VertexFormat.POINT_NORMAL_TEXCOORD);
 		blocks.forEach(b -> b.buildEmbedded(mesh));
 		meshView.setMesh(mesh);
