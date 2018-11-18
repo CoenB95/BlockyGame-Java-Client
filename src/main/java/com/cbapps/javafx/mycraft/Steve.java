@@ -1,7 +1,5 @@
 package com.cbapps.javafx.mycraft;
 
-import com.cbapps.javafx.gamo.components.SmoothRotationComponent;
-import com.cbapps.javafx.gamo.components.SmoothTranslationComponent;
 import com.cbapps.javafx.gamo.math.RotationalDelta;
 import com.cbapps.javafx.gamo.objects.GameObjectBase;
 import javafx.scene.input.MouseEvent;
@@ -20,9 +18,6 @@ public class Steve extends GameObjectBase {
 
 	public Steve() {
 		this(DEFAULT_SENSITIVITY);
-
-		addComponent(SmoothTranslationComponent.direct());
-		addComponent(SmoothRotationComponent.direct());
 	}
 
 	public Steve(double sensitivity) {
