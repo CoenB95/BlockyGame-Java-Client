@@ -35,7 +35,7 @@ public class Steve extends GameObjectBase {
 		if (!ignoreFirstMovement) {
 			double horizontalDelta = (event.getScreenX() - 800) * horizontalSensitivity;
 			double verticalDelta = -(event.getScreenY() - 450) * verticalSensitivity;
-			setTargetRotation(getTargetRotation().add(new RotationalDelta(horizontalDelta, verticalDelta, 0)));
+			setTargetVector(getTargetVector().withRotation(getTargetVector().getRotation().add(new RotationalDelta(horizontalDelta, verticalDelta, 0))));
 		}
 		ignoreFirstMovement = false;
 	}

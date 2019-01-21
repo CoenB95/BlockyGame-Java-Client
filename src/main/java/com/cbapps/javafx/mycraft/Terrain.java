@@ -1,7 +1,8 @@
 package com.cbapps.javafx.mycraft;
 
-import com.cbapps.javafx.gamo.components.FollowComponent;
+import com.cbapps.javafx.gamo.components.*;
 import com.cbapps.javafx.gamo.math.Position;
+import com.cbapps.javafx.gamo.math.RotationalDelta;
 import com.cbapps.javafx.gamo.objects.GameObjectBase;
 import com.cbapps.javafx.gamo.scenes.GameScene;
 import com.cbapps.javafx.mycraft.components.FloatingComponent;
@@ -26,7 +27,7 @@ public class Terrain extends GameObjectBase {
 	private List<Integer> blockData;
 	private List<Block> blocks;
 	private FaceUtils faceMap;
-	private boolean embedded = false;
+	private boolean embedded = true;
 
 	public Terrain(GameScene scene, float blockWidth, float blockDepth, float blockHeight,
 				   int dataWidth, int dataDepth, int dataHeight, List<Integer> map) {
@@ -46,7 +47,7 @@ public class Terrain extends GameObjectBase {
 					int blockId = blockY * dataWidth * dataDepth + blockZ * dataWidth + blockX;
 					int blockState = blockData.get(blockId);
 					Block block = new Block(blockWidth, blockHeight, blockDepth, blockState);
-					block.setTargetPosition(new Position(blockX * blockWidth, blockY * blockHeight, blockZ * blockDepth));
+					block.setTargetVector(block.getTargetVector().withPosition(new Position(blockX * blockWidth, blockY * blockHeight, blockZ * blockDepth)));
 					blocks.add(block);
 				}
 			}
@@ -61,15 +62,19 @@ public class Terrain extends GameObjectBase {
 	private void buildStandaloneBlocks(GameScene scene, float blockHeight) {
 		blocks.forEach(b -> {
 			b.buildStandalone();
-			b.addComponent(FollowComponent.translating(this, b.getTargetPosition()));
-			b.addComponent(new FloatingComponent(Math.random() * blockHeight));
+			b.addComponent(FollowComponent.translating(this, b.getTargetVector().getPosition()));
+			//b.addComponent(new FloatingComponent(Math.random() * blockHeight));
+			//b.addComponent(new SpinComponent(new RotationalDelta(Math.random() * 50 - 25, 0, 0)));
 		});
 		scene.add3DObjects(blocks);
 	}
 
 	private void buildEmbeddedBlocks() {
 		TriangleMesh mesh  = new TriangleMesh(VertexFormat.POINT_NORMAL_TEXCOORD);
-		blocks.forEach(b -> b.buildEmbedded(mesh));
+		blocks.forEach(b -> {
+			b.onUpdate(0);
+			b.buildEmbedded(mesh);
+		});
 		meshView.setMesh(mesh);
 		setNode(meshView);
 	}
@@ -105,14 +110,39 @@ public class Terrain extends GameObjectBase {
 		return new Terrain(scene, blockSize, blockSize, blockSize, gridWidth, gridDepth, gridHeight, blockData);
 	}
 
+	private double nextUpdateIn;
+
 	@Override
 	public void onUpdate(double elapsedSeconds) {
 		super.onUpdate(elapsedSeconds);
-		if (embedded) {
-			blocks.forEach(b -> b.onUpdate(elapsedSeconds));
+		nextUpdateIn -= elapsedSeconds;
+		if (nextUpdateIn <= 0) {
+			List<Block> liftedBlocks = new ArrayList<>();
 			TriangleMesh mesh = new TriangleMesh(VertexFormat.POINT_NORMAL_TEXCOORD);
-			CompletableFuture.runAsync(() -> blocks.forEach(block -> block.buildEmbedded(mesh)))
-					.thenAccept((e) -> Platform.runLater(() -> meshView.setMesh(mesh)));
+			CompletableFuture.runAsync(() -> {
+				for (int i = 0; i < 5; i++) {
+					Block b = blocks.get((int) (Math.random() * blocks.size()));
+					if (blocks.remove(b)) {
+						liftedBlocks.add(b);
+
+						b.buildStandalone();
+						b.addComponent(FollowComponent.translating(this, b.getTargetVector().getPosition()));
+						b.addComponent(new FloatingComponent(200));
+						b.addComponent(new SpinComponent(new RotationalDelta(Math.random() * 50 - 25, 0, 0)));
+						b.addEditor(new SmoothScalingComponent(0.99));
+						b.addEditor(SmoothRotationComponent.direct());
+						b.addEditor(SmoothTranslationComponent.direct());
+						b.setTargetVector(b.getTargetVector().withScale(0.2));
+					}
+				}
+
+				blocks.forEach(block -> block.buildEmbedded(mesh));
+			}).thenAccept((e) -> Platform.runLater(() -> {
+				meshView.setMesh(mesh);
+				getParentGroup().addObjects(liftedBlocks);
+			}));
+
+			nextUpdateIn = 1;
 		}
 	}
 }

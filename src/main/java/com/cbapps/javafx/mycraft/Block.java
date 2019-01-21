@@ -48,9 +48,9 @@ public class Block extends GameObjectBase {
 		if (blockState == 0)
 			return;
 
-		float x = (applyOffset ? (float) getPosition().getX() : 0);
-		float y = (applyOffset ? (float) -getPosition().getY() : 0);
-		float z = (applyOffset ? (float) getPosition().getZ() : 0);
+		float x = (applyOffset ? (float) getCurrentVector().getPosition().getX() : 0);
+		float y = (applyOffset ? (float) -getCurrentVector().getPosition().getY() : 0);
+		float z = (applyOffset ? (float) getCurrentVector().getPosition().getZ() : 0);
 		float hw = blockWidth / 2;
 		float hh = blockHeight / 2;
 		float hd = blockDepth / 2;

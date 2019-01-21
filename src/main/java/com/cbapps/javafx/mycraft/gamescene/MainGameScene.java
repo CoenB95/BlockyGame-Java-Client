@@ -52,14 +52,14 @@ public class MainGameScene extends GameScene {
 		steve = new Steve();
 		camera = new Camera(200, 9000);
 		camera.addComponent(FollowComponent.rotatingAndTranslating(steve));
-		camera.addComponent(new SmoothRotationComponent(0.8));
-		camera.addComponent(new SmoothTranslationComponent( 0.95));
+		camera.addEditor(new SmoothRotationComponent(0.8));
+		camera.addEditor(new SmoothTranslationComponent( 0.95));
 
 		chunks = new ArrayList<>();
 		for (int x = 0; x < 3; x++) {
 			for (int z = 0; z < 3; z++) {
 				Terrain terrain = Terrain.generateRandom(this, blockSize, size, size, 2);
-				terrain.setTargetPosition(new Position(size * blockSize * x, 0, (size * blockSize * z)));
+				terrain.setTargetVector(terrain.getTargetVector().withPosition(new Position(size * blockSize * x, 0, (size * blockSize * z))));
 				chunks.add(terrain);
 			}
 		}
@@ -135,7 +135,7 @@ public class MainGameScene extends GameScene {
 			walk = false;
 
 		if (walk || jump || sneak) {
-			RotationalDelta direction = steve.getTargetRotation().withVertical(verAngle).addHorizontal(horAngle);
+			RotationalDelta direction = steve.getTargetVector().getRotation().withVertical(verAngle).addHorizontal(horAngle);
 
 			PositionalDelta targetDelta = PositionalDelta.ZERO;
 			if (walk)
@@ -145,23 +145,23 @@ public class MainGameScene extends GameScene {
 			if (sneak)
 				targetDelta = targetDelta.add(new Rotation(0, -90, 0), 20);
 
-			steve.setTargetPosition(steve.getPosition()
+			steve.setTargetVector(steve.getTargetVector().withPosition(steve.getCurrentVector().getPosition()
 					.add(targetDelta)
 					.limitX(-0.5 * size * blockSize, 2.5 * size * blockSize)
-					.limitZ(-0.5 * size * blockSize, 2.5 * size * blockSize).asPosition());
+					.limitZ(-0.5 * size * blockSize, 2.5 * size * blockSize).asPosition()));
 		}
 
-		Terrain currentChunk = getChunk(steve.getPosition());
+		Terrain currentChunk = getChunk(steve.getCurrentVector().getPosition());
 		if (currentChunk != null) {
-			double globalX = 0.5 * size + Math.floor(steve.getPosition().getX() / blockSize);
-			double globalY = 0.5 * size + Math.floor(steve.getPosition().getY() / blockSize);
-			double globalZ = 0.5 * size + Math.floor(steve.getPosition().getZ() / blockSize);
+			double globalX = 0.5 * size + Math.floor(steve.getCurrentVector().getPosition().getX() / blockSize);
+			double globalY = 0.5 * size + Math.floor(steve.getCurrentVector().getPosition().getY() / blockSize);
+			double globalZ = 0.5 * size + Math.floor(steve.getCurrentVector().getPosition().getZ() / blockSize);
 			double chunkX = Math.abs(globalX) % size;
 			double chunkZ = Math.abs(globalZ) % size;
 			coordinateText.set(String.format("x: %2.0f y: %2.0f z: %2.0f (block %2.0f,%2.0f in chunk %2.0f,%2.0f)%n",
 					globalX, globalY, globalZ,
 					chunkX, chunkZ,
-					currentChunk.getPosition().getX() / size / blockSize, currentChunk.getPosition().getZ() / size / blockSize));
+					currentChunk.getCurrentVector().getPosition().getX() / size / blockSize, currentChunk.getCurrentVector().getPosition().getZ() / size / blockSize));
 		}
 		escapeText.set(escape ? "In menu\n" : "In game");
 	}

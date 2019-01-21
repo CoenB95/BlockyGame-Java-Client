@@ -1,8 +1,9 @@
 package com.cbapps.javafx.mycraft.components;
 
 import com.cbapps.javafx.gamo.components.GameObjectComponent;
+import com.cbapps.javafx.gamo.objects.GameVector;
 
-public class FloatingComponent extends GameObjectComponent {
+public class FloatingComponent implements GameObjectComponent {
 	private double rize;
 	private double value;
 
@@ -11,8 +12,8 @@ public class FloatingComponent extends GameObjectComponent {
 	}
 
 	@Override
-	public void onUpdate(double elapsedSeconds) {
+	public GameVector onUpdate(double elapsedSeconds, GameVector target) {
 		value += rize * elapsedSeconds;
-		getParentObject().setTargetPosition(getParentObject().getTargetPosition().withY(value));
+		return target.withPosition(target.getPosition().addY(value).asPosition());
 	}
 }

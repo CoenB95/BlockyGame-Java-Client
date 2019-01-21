@@ -1,5 +1,6 @@
 package com.cbapps.javafx.mycraft;
 
+import com.cbapps.javafx.mycraft.main.BoxMain;
 import javafx.geometry.Point3D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
