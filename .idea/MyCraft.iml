@@ -21,5 +21,12 @@
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:11.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:win:11.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.cbapps.javafx:gamo:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:11.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:win:11.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:11.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:win:11.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:11.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:win:11.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.cbapps.javafx:gamo:1.0" level="project" />
   </component>
 </module>
