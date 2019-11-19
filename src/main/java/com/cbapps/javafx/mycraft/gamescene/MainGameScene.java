@@ -144,23 +144,23 @@ public class MainGameScene extends GameApp {
 		else
 			walk = false;
 
-		steve.setPosition(steve.getPosition().add(walk ? 20 : 0, 0, 0).asPosition());
-		/*if (walk || jump || sneak) {
+		horAngle -= 90;
+		if (walk || jump || sneak) {
 			RotationalDelta direction = steve.getRotation().withVertical(verAngle).addHorizontal(horAngle);
 
 			PositionalDelta targetDelta = PositionalDelta.ZERO;
 			if (walk)
-				targetDelta = targetDelta.add(direction, 20);
+				targetDelta = targetDelta.add(Math.cos(Math.toRadians(horAngle)) * 20, 0, Math.sin(Math.toRadians(horAngle)) * 20);
 			if (jump)
-				targetDelta = targetDelta.add(new Rotation(0, 90, 0), 20);
+				targetDelta = targetDelta.add(0, 20, 0);
 			if (sneak)
-				targetDelta = targetDelta.add(new Rotation(0, -90, 0), 20);
+				targetDelta = targetDelta.add(0, -20, 0);
 
-			steve.setTargetVector(steve.getTargetVector().withPosition(steve.getCurrentVector().getPosition()
+			steve.setPosition(steve.getPosition()
 					.add(targetDelta)
 					.limitX(-0.5 * size * blockSize, 2.5 * size * blockSize)
-					.limitZ(-0.5 * size * blockSize, 2.5 * size * blockSize).asPosition()));
-		}*/
+					.limitZ(-0.5 * size * blockSize, 2.5 * size * blockSize).asPosition());
+		}
 
 		Terrain currentChunk = getChunk(steve.getPosition());
 		if (currentChunk != null) {
