@@ -19,14 +19,14 @@ public class Block extends GameObjectBase {
 	private float blockHeight;
 	private float blockWidth;
 	private int blockState;
-	private float rize;
+
+	public boolean popped = false;
 
 	public Block(double w, double h, double d, int state) {
 		blockWidth = (float) w;
 		blockHeight = (float) h;
 		blockDepth = (float) d;
 		blockState = state;
-		rize = (float) (Math.random() * blockHeight);
 	}
 
 	public void buildEmbedded(TriangleMesh mesh) {
@@ -157,5 +157,7 @@ public class Block extends GameObjectBase {
 	@Override
 	public void onUpdate(double elapsedSeconds) {
 		super.onUpdate(elapsedSeconds);
+		if (popped)
+			setScale(0.2);
 	}
 }

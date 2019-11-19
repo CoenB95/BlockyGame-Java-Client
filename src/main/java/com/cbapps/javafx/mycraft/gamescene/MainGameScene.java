@@ -56,6 +56,7 @@ public class MainGameScene extends GameApp {
 
 	@Override
 	public void onStart(GameObjectGroup scene) {
+		useStableTiming = false;
 
 		steve = new Steve();
 		steve.setPosition(new Position(0, 200, 0));

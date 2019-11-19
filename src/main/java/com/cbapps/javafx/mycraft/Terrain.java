@@ -130,10 +130,9 @@ public class Terrain extends GameObjectBase {
 						//b.addComponent(FollowComponent.translating(this, b.getTargetVector().getPosition()));
 						b.addComponent(new FloatingComponent(200));
 						b.addComponent(new SpinComponent(new RotationalDelta(Math.random() * 50 - 25, 0, 0)));
-						b.addComponent(new SmoothScalingComponent(0.99));
-						b.addComponent(SmoothRotationComponent.direct());
-						b.addComponent(SmoothTranslationComponent.direct());
-						b.setScale(0.2);
+						b.addComponent(new SmoothScalingComponent(0.5));
+						//b.setScale(0.2);
+						b.popped = true;
 					}
 				}
 
