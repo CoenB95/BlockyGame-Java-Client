@@ -1,7 +1,6 @@
 module mycraft {
-	exports com.cbapps.javafx.mycraft;
+	exports com.cbapps.javafx.mycraft.main;
 
-	requires javafx.graphics;
 	requires javafx.controls;
 	requires gamo;
 }

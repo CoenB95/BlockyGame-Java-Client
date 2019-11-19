@@ -1,11 +1,12 @@
 package com.cbapps.javafx.mycraft;
 
+import com.cbapps.javafx.gamo.groups.GameObjectGroup;
 import com.cbapps.javafx.gamo.math.RotationalDelta;
 import com.cbapps.javafx.gamo.objects.GameObjectBase;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.robot.Robot;
+//import javafx.scene.robot.Robot;
 
-public class Steve extends GameObjectBase {
+public class Steve extends GameObjectGroup {
 	public static final double DEFAULT_SENSITIVITY = 0.2;
 
 	private double horizontalSensitivity;
@@ -27,7 +28,7 @@ public class Steve extends GameObjectBase {
 
 	public void applyMouseMoved(MouseEvent event) {
 		try {
-			new Robot().mouseMove(800, 450);
+			//new Robot().mouseMove(800, 450);
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
 		}
@@ -35,7 +36,7 @@ public class Steve extends GameObjectBase {
 		if (!ignoreFirstMovement) {
 			double horizontalDelta = (event.getScreenX() - 800) * horizontalSensitivity;
 			double verticalDelta = -(event.getScreenY() - 450) * verticalSensitivity;
-			setTargetVector(getTargetVector().withRotation(getTargetVector().getRotation().add(new RotationalDelta(horizontalDelta, verticalDelta, 0))));
+			//setTargetVector(getTargetVector().withRotation(getTargetVector().getRotation().add(new RotationalDelta(horizontalDelta, verticalDelta, 0))));
 		}
 		ignoreFirstMovement = false;
 	}

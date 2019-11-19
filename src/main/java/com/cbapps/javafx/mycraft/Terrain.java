@@ -1,6 +1,7 @@
 package com.cbapps.javafx.mycraft;
 
 import com.cbapps.javafx.gamo.components.*;
+import com.cbapps.javafx.gamo.groups.GameObjectGroup;
 import com.cbapps.javafx.gamo.math.Position;
 import com.cbapps.javafx.gamo.math.RotationalDelta;
 import com.cbapps.javafx.gamo.objects.GameObjectBase;
@@ -29,7 +30,7 @@ public class Terrain extends GameObjectBase {
 	private FaceUtils faceMap;
 	private boolean embedded = true;
 
-	public Terrain(GameScene scene, float blockWidth, float blockDepth, float blockHeight,
+	public Terrain(GameObjectGroup scene, float blockWidth, float blockDepth, float blockHeight,
 				   int dataWidth, int dataDepth, int dataHeight, List<Integer> map) {
 		this.faceMap = new FaceUtils();
 
@@ -47,7 +48,7 @@ public class Terrain extends GameObjectBase {
 					int blockId = blockY * dataWidth * dataDepth + blockZ * dataWidth + blockX;
 					int blockState = blockData.get(blockId);
 					Block block = new Block(blockWidth, blockHeight, blockDepth, blockState);
-					block.setTargetVector(block.getTargetVector().withPosition(new Position(blockX * blockWidth, blockY * blockHeight, blockZ * blockDepth)));
+					block.setPosition(new Position(blockX * blockWidth, blockY * blockHeight, blockZ * blockDepth));
 					blocks.add(block);
 				}
 			}
@@ -59,14 +60,14 @@ public class Terrain extends GameObjectBase {
 			buildStandaloneBlocks(scene, blockHeight);
 	}
 
-	private void buildStandaloneBlocks(GameScene scene, float blockHeight) {
+	private void buildStandaloneBlocks(GameObjectGroup scene, float blockHeight) {
 		blocks.forEach(b -> {
 			b.buildStandalone();
-			b.addComponent(FollowComponent.translating(this, b.getTargetVector().getPosition()));
+			//b.addComponent(FollowComponent.translating(this, b.getPosition()));
 			//b.addComponent(new FloatingComponent(Math.random() * blockHeight));
 			//b.addComponent(new SpinComponent(new RotationalDelta(Math.random() * 50 - 25, 0, 0)));
 		});
-		scene.add3DObjects(blocks);
+		scene.addObjects(blocks);
 	}
 
 	private void buildEmbeddedBlocks() {
@@ -103,7 +104,7 @@ public class Terrain extends GameObjectBase {
 		lastMarked = blockId;
 	}
 
-	public static Terrain generateRandom(GameScene scene,float blockSize, int gridWidth, int gridDepth, int gridHeight) {
+	public static Terrain generateRandom(GameObjectGroup scene,float blockSize, int gridWidth, int gridDepth, int gridHeight) {
 		List<Integer> blockData = new ArrayList<>(gridWidth * gridDepth);
 		for (int i = 0; i < gridWidth * gridDepth * gridHeight; i++)
 			blockData.add(i < gridWidth * gridDepth ? 1 : Math.random() > 0.8 ? 1 : 0);
@@ -126,13 +127,13 @@ public class Terrain extends GameObjectBase {
 						liftedBlocks.add(b);
 
 						b.buildStandalone();
-						b.addComponent(FollowComponent.translating(this, b.getTargetVector().getPosition()));
+						//b.addComponent(FollowComponent.translating(this, b.getTargetVector().getPosition()));
 						b.addComponent(new FloatingComponent(200));
 						b.addComponent(new SpinComponent(new RotationalDelta(Math.random() * 50 - 25, 0, 0)));
-						b.addEditor(new SmoothScalingComponent(0.99));
-						b.addEditor(SmoothRotationComponent.direct());
-						b.addEditor(SmoothTranslationComponent.direct());
-						b.setTargetVector(b.getTargetVector().withScale(0.2));
+						b.addComponent(new SmoothScalingComponent(0.99));
+						b.addComponent(SmoothRotationComponent.direct());
+						b.addComponent(SmoothTranslationComponent.direct());
+						b.setScale(0.2);
 					}
 				}
 

@@ -1,8 +1,10 @@
 package com.cbapps.javafx.mycraft.gamescene;
 
+import com.cbapps.javafx.gamo.apps.GameApp;
 import com.cbapps.javafx.gamo.components.FollowComponent;
 import com.cbapps.javafx.gamo.components.SmoothRotationComponent;
 import com.cbapps.javafx.gamo.components.SmoothTranslationComponent;
+import com.cbapps.javafx.gamo.groups.GameObjectGroup;
 import com.cbapps.javafx.gamo.math.Position;
 import com.cbapps.javafx.gamo.math.PositionalDelta;
 import com.cbapps.javafx.gamo.math.Rotation;
@@ -26,7 +28,9 @@ import javafx.scene.layout.Pane;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainGameScene extends GameScene {
+import static javafx.application.Application.launch;
+
+public class MainGameScene extends GameApp {
 	private KeyCode forwardKey = KeyCode.W;
 	private KeyCode leftKey = KeyCode.A;
 	private KeyCode backwardKey = KeyCode.S;
@@ -46,20 +50,26 @@ public class MainGameScene extends GameScene {
 	private StringProperty coordinateText = new SimpleStringProperty();
 	private StringProperty escapeText = new SimpleStringProperty();
 
-	public MainGameScene(Scene scene, Pane root) {
-		super(scene, root);
+	public static void main(String[] args) {
+		launch(args);
+	}
+
+	@Override
+	public void onStart(GameObjectGroup scene) {
 
 		steve = new Steve();
+		steve.setPosition(new Position(0, 200, 0));
+
 		camera = new Camera(200, 9000);
 		camera.addComponent(FollowComponent.rotatingAndTranslating(steve));
-		camera.addEditor(new SmoothRotationComponent(0.8));
-		camera.addEditor(new SmoothTranslationComponent( 0.95));
+		camera.addComponent(new SmoothRotationComponent(0.8));
+		camera.addComponent(new SmoothTranslationComponent(0.95));
 
 		chunks = new ArrayList<>();
 		for (int x = 0; x < 3; x++) {
 			for (int z = 0; z < 3; z++) {
-				Terrain terrain = Terrain.generateRandom(this, blockSize, size, size, 2);
-				terrain.setTargetVector(terrain.getTargetVector().withPosition(new Position(size * blockSize * x, 0, (size * blockSize * z))));
+				Terrain terrain = Terrain.generateRandom(scene, blockSize, size, size, 2);
+				terrain.setPosition(new Position(size * blockSize * x, 0, (size * blockSize * z)));
 				chunks.add(terrain);
 			}
 		}
@@ -69,17 +79,17 @@ public class MainGameScene extends GameScene {
 		TextObject label = new TextObject();
 		label.textProperty().bind(debugText);
 
-		add3DObject(steve);
-		add3DObject(camera);
-		add3DObjects(chunks);
-		add2DObject(label);
-		setCamera(camera.camera);
+		scene.addObject(steve);
+		//addObject(camera);
+		scene.addObjects(chunks);
+		scene.addObject(label);
+		scene.setCamera(camera);
 	}
 
 	private Terrain getChunk(Position position)
 	{
-		int chunkX = (int) Math.round(position.getX() / size / blockSize);
-		int chunkZ = (int) Math.round(position.getZ() / size / blockSize);
+		int chunkX = (int) Math.round(position.x / size / blockSize);
+		int chunkZ = (int) Math.round(position.z / size / blockSize);
 		int index = chunkX * 3 + chunkZ;
 		if (index < 0 || index >= chunks.size())
 			return null;
@@ -134,8 +144,9 @@ public class MainGameScene extends GameScene {
 		else
 			walk = false;
 
-		if (walk || jump || sneak) {
-			RotationalDelta direction = steve.getTargetVector().getRotation().withVertical(verAngle).addHorizontal(horAngle);
+		steve.setPosition(steve.getPosition().add(walk ? 20 : 0, 0, 0).asPosition());
+		/*if (walk || jump || sneak) {
+			RotationalDelta direction = steve.getRotation().withVertical(verAngle).addHorizontal(horAngle);
 
 			PositionalDelta targetDelta = PositionalDelta.ZERO;
 			if (walk)
@@ -149,19 +160,19 @@ public class MainGameScene extends GameScene {
 					.add(targetDelta)
 					.limitX(-0.5 * size * blockSize, 2.5 * size * blockSize)
 					.limitZ(-0.5 * size * blockSize, 2.5 * size * blockSize).asPosition()));
-		}
+		}*/
 
-		Terrain currentChunk = getChunk(steve.getCurrentVector().getPosition());
+		Terrain currentChunk = getChunk(steve.getPosition());
 		if (currentChunk != null) {
-			double globalX = 0.5 * size + Math.floor(steve.getCurrentVector().getPosition().getX() / blockSize);
-			double globalY = 0.5 * size + Math.floor(steve.getCurrentVector().getPosition().getY() / blockSize);
-			double globalZ = 0.5 * size + Math.floor(steve.getCurrentVector().getPosition().getZ() / blockSize);
+			double globalX = 0.5 * size + Math.floor(steve.getPosition().x / blockSize);
+			double globalY = 0.5 * size + Math.floor(steve.getPosition().y / blockSize);
+			double globalZ = 0.5 * size + Math.floor(steve.getPosition().z / blockSize);
 			double chunkX = Math.abs(globalX) % size;
 			double chunkZ = Math.abs(globalZ) % size;
 			coordinateText.set(String.format("x: %2.0f y: %2.0f z: %2.0f (block %2.0f,%2.0f in chunk %2.0f,%2.0f)%n",
 					globalX, globalY, globalZ,
 					chunkX, chunkZ,
-					currentChunk.getCurrentVector().getPosition().getX() / size / blockSize, currentChunk.getCurrentVector().getPosition().getZ() / size / blockSize));
+					currentChunk.getPosition().x / size / blockSize, currentChunk.getPosition().z / size / blockSize));
 		}
 		escapeText.set(escape ? "In menu\n" : "In game");
 	}
