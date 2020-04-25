@@ -1,2 +1,8 @@
-/.idea
-/target
+# Ignore Visual Studio Code Files
+.settings/
+.vscode/
+.classpath
+.project
+
+# Ignore Maven build output
+target/

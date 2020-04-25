@@ -56,6 +56,7 @@ public class MainGameScene extends GameApp {
 
 	@Override
 	public void onStart(GameObjectGroup scene) {
+		System.out.println("JavaFX version: " + System.getProperties().get("javafx.runtime.version"));
 		useStableTiming = false;
 
 		steve = new Steve();
