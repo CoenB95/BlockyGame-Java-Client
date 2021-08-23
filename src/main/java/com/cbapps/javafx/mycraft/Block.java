@@ -1,6 +1,6 @@
 package com.cbapps.javafx.mycraft;
 
-import com.cbapps.javafx.gamo.objects.GameObjectBase;
+import com.cbapps.gamo.javafx.GameObjectBase;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -13,20 +13,26 @@ import javafx.scene.shape.VertexFormat;
  * @version 1.0
  */
 public class Block extends GameObjectBase {
-	private MeshView meshView;
-	private TriangleMesh triangleMesh;
-	private float blockDepth;
-	private float blockHeight;
-	private float blockWidth;
-	private int blockState;
+	private final float blockDepth;
+	private final float blockHeight;
+	private final float blockWidth;
+	private final int blockState;
+	private final MeshView meshView;
 
 	public boolean popped = false;
 
 	public Block(double w, double h, double d, int state) {
-		blockWidth = (float) w;
-		blockHeight = (float) h;
-		blockDepth = (float) d;
-		blockState = state;
+		this(w, h, d, state, new MeshView());
+	}
+
+	private Block(double w, double h, double d, int state, MeshView meshView) {
+		super(meshView);
+
+		this.blockWidth = (float) w;
+		this.blockHeight = (float) h;
+		this.blockDepth = (float) d;
+		this.blockState = state;
+		this.meshView = meshView;
 	}
 
 	public void buildEmbedded(TriangleMesh mesh) {
@@ -34,13 +40,12 @@ public class Block extends GameObjectBase {
 	}
 
 	public void buildStandalone() {
-		triangleMesh = new TriangleMesh(VertexFormat.POINT_NORMAL_TEXCOORD);
+		var triangleMesh = new TriangleMesh(VertexFormat.POINT_NORMAL_TEXCOORD);
 		buildFaces(triangleMesh,false);
-		meshView = new MeshView(triangleMesh);
+		meshView.setMesh(triangleMesh);
 		meshView.setMaterial(new PhongMaterial(Color.WHITE,
 				new Image("/cube.png", 100, 100, true, false),
 				null, null, null));
-		setNode(meshView);
 	}
 
 	public void buildFaces(TriangleMesh mesh, boolean applyOffset)
@@ -48,9 +53,9 @@ public class Block extends GameObjectBase {
 		if (blockState == 0)
 			return;
 
-		float x = (applyOffset ? (float) getPosition().x : 0);
-		float y = (applyOffset ? (float) -getPosition().y : 0);
-		float z = (applyOffset ? (float) getPosition().z : 0);
+		float x = (applyOffset ? (float) getPosition().x() : 0);
+		float y = (applyOffset ? (float) getPosition().y() : 0);
+		float z = (applyOffset ? (float) getPosition().z() : 0);
 		float hw = blockWidth / 2;
 		float hh = blockHeight / 2;
 		float hd = blockDepth / 2;
@@ -61,7 +66,11 @@ public class Block extends GameObjectBase {
 		float back = z + hd;
 		float front = z - hd;
 
-		float points[] = {
+		int pointsOffset = mesh.getPoints().size() / 3;
+		int normalsOffset = mesh.getNormals().size() / 3;
+		int texOffset = mesh.getTexCoords().size() / 2;
+
+		mesh.getPoints().addAll(
 				//Top
 				right, top, back,
 				left, top, back,
@@ -92,18 +101,18 @@ public class Block extends GameObjectBase {
 				left, bottom, front,
 				left, bottom, back,
 				right, bottom, back
-		};
+		);
 
-		float normals[] = {
+		mesh.getNormals().addAll(
 				0, -1,  0, //Top
 				-1,  0,  0, //Left
 				0,  0, -1, //Front
 				1,  0,  0, //Right
 				0,  0,  1, //Back
 				0,  1,  0  //Bottom
-		};
+		);
 
-		float texCoords[] = {
+		mesh.getTexCoords().addAll(
 				//Top
 				0.50f, 0.00f,
 				0.25f, 0.00f,
@@ -133,16 +142,8 @@ public class Block extends GameObjectBase {
 				0.50f, 0.50f,
 				0.25f, 0.50f,
 				0.25f, 0.75f,
-				0.50f, 0.75f,
-		};
-
-		int pointsOffset = mesh.getPoints().size() / 3;
-		int normalsOffset = mesh.getNormals().size() / 3;
-		int texOffset = mesh.getTexCoords().size() / 2;
-
-		mesh.getPoints().addAll(points);
-		mesh.getNormals().addAll(normals);
-		mesh.getTexCoords().addAll(texCoords);
+				0.50f, 0.75f
+		);
 
 		for (int side = 0; side < 6 ; side++) {
 			mesh.getFaces().addAll(pointsOffset + side * 4, normalsOffset + side, texOffset + side * 4);

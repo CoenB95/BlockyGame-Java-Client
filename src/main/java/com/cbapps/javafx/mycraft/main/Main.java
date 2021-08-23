@@ -1,14 +1,14 @@
 package com.cbapps.javafx.mycraft.main;
 
-import com.cbapps.javafx.mycraft.gamescene.MainGameScene;
+import javafx.application.Application;
 
 /**
  * @author Coen Boelhouwers
  * @version 1.0
  */
-public class BoxMain {
+public class Main {
 
 	public static void main(String[] args) {
-		MainGameScene.main(args);
+		Application.launch(CraftFX.class, args);
 	}
 }

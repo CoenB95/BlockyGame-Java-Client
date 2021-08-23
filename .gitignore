@@ -1,3 +1,7 @@
+# Ignore Intellij Idea Files
+.idea/
+*.iml
+
 # Ignore Visual Studio Code Files
 .settings/
 .vscode/
